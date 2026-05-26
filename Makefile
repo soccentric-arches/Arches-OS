@@ -40,7 +40,20 @@ endif
 
 # --- Board -------------------------------------------------------------------
 # Select target board — must match a file in kas/boards/<BOARD>.yaml
-# Boards: jetson-orin-nano (default)
+# SD card boards:
+#   jetson-orin-nano             Jetson Orin Nano devkit (SD card, default)
+# eMMC boards (AGX Orin family):
+#   jetson-agx-orin-devkit       Jetson AGX Orin devkit (P3701-0000)
+#   jetson-agx-orin-devkit-industrial  Jetson AGX Orin Industrial 64GB (P3701-0008)
+#   p3737-0000-p3701-0004        Jetson AGX Orin 32GB (P3701-0004 in P3737)
+#   p3737-0000-p3701-0005        Jetson AGX Orin 64GB (P3701-0005 in P3737)
+# NVMe boards:
+#   jetson-orin-nano-devkit-nvme Jetson Orin Nano devkit (NVMe)
+#   p3509-a02-p3767-0000         Jetson Orin NX 16GB in P3509 carrier
+#   p3768-0000-p3767-0000        Jetson Orin NX 16GB (P3767-0000 in P3768)
+#   p3768-0000-p3767-0001        Jetson Orin NX 8GB  (P3767-0001 in P3768)
+#   p3768-0000-p3767-0003        Jetson Orin Nano 8GB (P3767-0003 in P3768)
+#   p3768-0000-p3767-0004        Jetson Orin Nano 4GB (P3767-0004 in P3768)
 BOARD            ?= jetson-orin-nano
 KAS_CONFIG       := kas/boards/$(BOARD).yaml
 

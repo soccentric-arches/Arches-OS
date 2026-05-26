@@ -1,0 +1,11 @@
+header:
+  version: 14
+  includes:
+    - ../common.yaml
+
+machine: jetson-agx-orin-devkit-industrial
+
+local_conf_header:
+  wks: |
+    # A/B OTA partition layout (see meta-arches/wic/sdimage-jetson-agx-orin.wks)
+    WKS_FILE = "sdimage-jetson-agx-orin.wks"
