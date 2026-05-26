@@ -4,7 +4,7 @@ header:
 repos:
   meta-arches:
     url: git@github.com:SiliconCentric/meta-arches.git
-    branch: scarthgap
+    branch: master
     # TODO: pin to a specific commit — run scripts/pin-layers.sh
     path: meta/meta-arches
     layers:
