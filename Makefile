@@ -18,10 +18,10 @@ SWU_VERSION      ?= $(shell date +%Y%m%d%H%M)
 
 # --- Positional board argument -----------------------------------------------
 # The board name is typed directly after the target — no BOARD= needed:
-#   make image rpi5
-#   make sdk   rpi4-64
-#   make esdk  rpi3-64
-#   make shell cm5
+#   make image jetson-orin-nano
+#   make sdk   jetson-orin-nano
+#   make esdk  jetson-orin-nano
+#   make shell jetson-orin-nano
 # This block MUST appear before the BOARD default and KAS_CONFIG / MACHINE
 # definitions so those variables are derived from the correct board name.
 _BOARD_TARGETS := image build rebuild-image sdk esdk sdk-image esdk-image shell swu flash
@@ -130,7 +130,7 @@ ensure-image:
 	         $(MAKE) kas-image; }
 
 ## Build the Yocto SD card image for BOARD — alias for build
-## Usage: make image rpi5
+## Usage: make image jetson-orin-nano
 image: build
 
 ## Full chain: Yocto SDK build → stage installer → docker build → deploy
@@ -312,7 +312,7 @@ swu: build
 	@$(MAKE) --no-print-directory deploy-swu DEPLOY_TS=$(DEPLOY_TS)
 
 
-## Flash to SD card.  Usage: make flash rpi5 DEVICE=/dev/sdX
+## Flash to SD card.  Usage: make flash jetson-orin-nano DEVICE=/dev/sdX
 flash:
 ifndef DEVICE
 	$(error DEVICE is not set — example: make flash DEVICE=/dev/sdb)
