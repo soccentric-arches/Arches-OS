@@ -4,11 +4,8 @@ header:
 repos:
   poky:
     url: https://git.yoctoproject.org/poky
-    branch: master
-    # TODO: pin to a specific commit for reproducible builds.
-    # Run: scripts/pin-layers.sh  or set manually:
-    #   commit: <40-char-sha>
-    commit: HEAD
+    branch: scarthgap
+    commit: d4576e3c08
     path: layers/poky
     layers:
       meta:
