@@ -4,7 +4,7 @@ header:
 repos:
   meta-tegra:
     url: https://github.com/OE4T/meta-tegra
-    branch: scarthgap
+    branch: master
     # TODO: pin to a specific commit — run scripts/pin-layers.sh
     commit: HEAD
     path: layers/meta-tegra

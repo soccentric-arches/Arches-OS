@@ -4,7 +4,7 @@ header:
 repos:
   meta-openembedded:
     url: https://github.com/openembedded/meta-openembedded
-    branch: scarthgap
+    branch: master
     # TODO: pin to a specific commit — run scripts/pin-layers.sh
     commit: HEAD
     path: layers/meta-openembedded
