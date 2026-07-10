@@ -14,7 +14,12 @@ KAS_VERSION      ?= 4.5
 IMAGE_TARGET     ?= arches-image
 
 # OTA package version (overridable: make swu SWU_VERSION=1.2.3)
+# Frozen with ':=' so the value is computed once per invocation. A recursive
+# '?=' would re-run `date` on every expansion and drift across the multi-minute
+# gzip — mismatching the sw-description version, the .swu filename, and the
+# recursive deploy-swu lookup (which runs in its own make process).
 SWU_VERSION      ?= $(shell date +%Y%m%d%H%M)
+SWU_VERSION      := $(SWU_VERSION)
 
 # RSA private key for signing .swu packages (optional — absent = unsigned)
 SWU_PRIV_KEY     ?= meta/meta-arches/swupdate/keys/swupdate-private.pem
@@ -342,7 +347,7 @@ swu: check-board
 	      | cpio -ov -H newc > "$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
 	fi
 	@echo "OTA package: $(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"
-	@$(MAKE) --no-print-directory deploy-swu DEPLOY_TS=$(DEPLOY_TS)
+	@$(MAKE) --no-print-directory deploy-swu DEPLOY_TS=$(DEPLOY_TS) SWU_VERSION=$(SWU_VERSION)
 
 
 ## Flash to SD card.  Usage: make flash jetson-orin-nano DEVICE=/dev/sdX
