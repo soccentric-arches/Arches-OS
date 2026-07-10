@@ -16,6 +16,9 @@ IMAGE_TARGET     ?= arches-image
 # OTA package version (overridable: make swu SWU_VERSION=1.2.3)
 SWU_VERSION      ?= $(shell date +%Y%m%d%H%M)
 
+# RSA private key for signing .swu packages (optional — absent = unsigned)
+SWU_PRIV_KEY     ?= meta/meta-arches/swupdate/keys/swupdate-private.pem
+
 # --- Positional board argument -----------------------------------------------
 # The board name is typed directly after the target — no BOARD= needed:
 #   make image jetson-orin-nano
@@ -108,7 +111,7 @@ _ESDK_IMAGE_TAG  := $(lastword  $(subst :, ,$(ESDK_IMAGE)))
         kas-container-script shell flash sdk esdk swu \
         deploy-images deploy-sdk deploy-esdk deploy-swu \
         clean clean-build clean-docker clean-all \
-        completion help
+        check-board completion help lint test
 
 all: build
 
@@ -152,7 +155,7 @@ image: build
 ##   Step 3  locate and stage the SDK installer into docker/sdk/sdk.sh
 ##   Step 4  build the SDK Docker image
 ##   Step 5  deploy SDK artifacts to deploy/sdk/BOARD_TS/
-sdk-image: ensure-image kas-container-script
+sdk-image: ensure-image kas-container-script check-board
 	@echo ""
 	@echo "======================================================================"
 	@echo " sdk-image: building Yocto SDK + Docker image for $(SDK_IMAGE)"
@@ -191,7 +194,7 @@ sdk-image: ensure-image kas-container-script
 ##   Step 3  locate and stage the eSDK installer into docker/esdk/esdk.sh
 ##   Step 4  build the eSDK Docker image
 ##   Step 5  deploy eSDK artifacts to deploy/esdk/BOARD_TS/
-esdk-image: ensure-image kas-container-script
+esdk-image: ensure-image kas-container-script check-board
 	@echo ""
 	@echo "======================================================================"
 	@echo " esdk-image: building Yocto eSDK + Docker image for $(ESDK_IMAGE)"
@@ -240,39 +243,50 @@ ensure-esdk-image:
 # Yocto build targets
 # -----------------------------------------------------------------------------
 
+## Validate that BOARD has a kas config and MACHINE is derivable
+check-board:
+	@test -f "$(KAS_CONFIG)" \
+	    || { echo "ERROR: No board config at $(KAS_CONFIG)"; \
+	         echo "       Available boards:"; \
+	         ls kas/boards/*.yaml 2>/dev/null | xargs -n1 basename | sed 's/\.yaml//' | sed 's/^/         /'; \
+	         exit 1; }
+	@test -n "$(MACHINE)" \
+	    || { echo "ERROR: Could not derive MACHINE from $(KAS_CONFIG)"; exit 1; }
+	@echo "Board: $(BOARD)  Machine: $(MACHINE)"
+
 ## Build the Yocto image for the selected BOARD (default target)
-build: ensure-image kas-container-script
+build: ensure-image kas-container-script check-board
 	@mkdir -p $(BUILD_DIR) $(DL_DIR) $(SSTATE_DIR)
 	$(KAS_RUN) build $(KAS_CONFIG)
 	@$(MAKE) --no-print-directory deploy-images DEPLOY_TS=$(DEPLOY_TS)
 
 ## Clean sstate for the image recipe then rebuild (use after adding packages)
-rebuild-image: ensure-image kas-container-script
+rebuild-image: ensure-image kas-container-script check-board
 	$(KAS_RUN) shell $(KAS_CONFIG) -c "bitbake -c cleansstate $(IMAGE_TARGET)"
 	$(KAS_RUN) build $(KAS_CONFIG)
 	@$(MAKE) --no-print-directory deploy-images DEPLOY_TS=$(DEPLOY_TS)
 
 ## Interactive shell inside the KAS build container
-shell: ensure-image kas-container-script
+shell: ensure-image kas-container-script check-board
 	$(KAS_RUN) shell $(KAS_CONFIG)
 
 ## Build the cross-toolchain SDK installer and deploy it (no Docker image)
 ## Use 'make sdk-image' to also build the SDK Docker image.
-sdk: ensure-image kas-container-script
+sdk: ensure-image kas-container-script check-board
 	@mkdir -p $(BUILD_DIR) $(DL_DIR) $(SSTATE_DIR)
 	$(KAS_RUN) shell $(KAS_CONFIG) -c "bitbake -c populate_sdk $(IMAGE_TARGET)"
 	@$(MAKE) --no-print-directory deploy-sdk DEPLOY_TS=$(DEPLOY_TS)
 
 ## Build the extensible SDK installer and deploy it (no Docker image)
 ## Use 'make esdk-image' to also build the eSDK Docker image.
-esdk: ensure-image kas-container-script
+esdk: ensure-image kas-container-script check-board
 	@mkdir -p $(BUILD_DIR) $(DL_DIR) $(SSTATE_DIR)
 	$(KAS_RUN) shell $(KAS_CONFIG) -c "bitbake -c populate_sdk_ext $(IMAGE_TARGET)"
 	@$(MAKE) --no-print-directory deploy-esdk DEPLOY_TS=$(DEPLOY_TS)
 
 ## Build a .swu OTA update package from the latest rootfs.ext4 image
 ## Usage: make swu   or   make swu SWU_VERSION=1.2.3
-swu: build
+swu: check-board
 	$(eval ROOTFS := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
 	    -name "arches-image-$(MACHINE)*.rootfs.ext4" \
 	    -o -name "core-image-base-$(MACHINE)*.rootfs.ext4" 2>/dev/null \
@@ -287,15 +301,17 @@ swu: build
 
 	# --- kernel + DTB (required for I3: kernel/DTB included in OTA) ---
 	$(eval KERNEL := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
+	    -maxdepth 1 \
 	    -name "Image" -o -name "Image-$(MACHINE).bin" 2>/dev/null | sort -V | tail -1))
 	$(eval DTB := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
-	    -name "tegra234-p3768-*.dtb" 2>/dev/null | sort -V | tail -1))
-	@test -n "$(KERNEL)" || \
-	    { echo "WARNING: kernel Image not found — kernel will not be updated in this .swu"; }
-	@test -n "$(DTB)" || \
-	    { echo "WARNING: Jetson Orin Nano DTB not found — DTB will not be updated in this .swu"; }
-	@[ -n "$(KERNEL)" ] && cp "$(KERNEL)" "$(BUILD_DIR)/swu/Image" || true
-	@[ -n "$(DTB)" ]    && cp "$(DTB)"    "$(BUILD_DIR)/swu/tegra234-p3768-orin-nano.dtb" || true
+	    -maxdepth 1 \
+	    -name "*.dtb" 2>/dev/null | sort -V | tail -1))
+	@test -n "$(KERNEL)" \
+	    && { echo "  Found kernel: $(KERNEL)"; cp "$(KERNEL)" "$(BUILD_DIR)/swu/Image"; } \
+	    || echo "WARNING: kernel Image not found — kernel will not be updated in this .swu"
+	@test -n "$(DTB)" \
+	    && { echo "  Found DTB: $(DTB)"; cp "$(DTB)" "$(BUILD_DIR)/swu/$(notdir $(DTB))"; } \
+	    || echo "WARNING: DTB not found — DTB will not be updated in this .swu"
 
 	# --- sw-description ---
 	@sed "s|@@VERSION@@|$(SWU_VERSION)|" \
@@ -305,39 +321,46 @@ swu: build
 	@cp meta/meta-arches/swupdate/post-install.sh "$(BUILD_DIR)/swu/"
 
 	# --- optional RSA signing (C2) ---
-	@if [ -f "$(BUILD_DIR)/swu/../../meta/meta-arches/swupdate/keys/swupdate-private.pem" ]; then \
+	@if [ -f "$(SWU_PRIV_KEY)" ]; then \
 	    echo "Signing sw-description with RSA-4096 ..."; \
 	    openssl dgst -sha256 \
-	        -sign "meta/meta-arches/swupdate/keys/swupdate-private.pem" \
+	        -sign "$(SWU_PRIV_KEY)" \
 	        -out  "$(BUILD_DIR)/swu/sw-description.sig" \
 	        "$(BUILD_DIR)/swu/sw-description"; \
 	    echo "Packing SIGNED .swu ..."; \
 	    cd "$(BUILD_DIR)/swu" && \
-	        printf 'sw-description\nsw-description.sig\npre-install.sh\npost-install.sh\nrootfs.ext4.gz\nImage\ntegra234-p3768-orin-nano.dtb\n' | \
-	        cpio -ov -H newc > "$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
+	    { printf 'sw-description\nsw-description.sig\npre-install.sh\npost-install.sh\nrootfs.ext4.gz\n'; \
+	      [ -f Image ] && printf 'Image\n'; \
+	      ls *.dtb 2>/dev/null | while read f; do printf '%s\n' "$$f"; done; } \
+	      | cpio -ov -H newc > "$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
 	else \
 	    echo "WARNING: No private key found — packing UNSIGNED .swu (run scripts/generate-swu-keys.sh to enable signing)"; \
 	    cd "$(BUILD_DIR)/swu" && \
-	        printf 'sw-description\npre-install.sh\npost-install.sh\nrootfs.ext4.gz\nImage\ntegra234-p3768-orin-nano.dtb\n' | \
-	        cpio -ov -H newc > "$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
+	    { printf 'sw-description\npre-install.sh\npost-install.sh\nrootfs.ext4.gz\n'; \
+	      [ -f Image ] && printf 'Image\n'; \
+	      ls *.dtb 2>/dev/null | while read f; do printf '%s\n' "$$f"; done; } \
+	      | cpio -ov -H newc > "$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
 	fi
 	@echo "OTA package: $(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"
 	@$(MAKE) --no-print-directory deploy-swu DEPLOY_TS=$(DEPLOY_TS)
 
 
 ## Flash to SD card.  Usage: make flash jetson-orin-nano DEVICE=/dev/sdX
-flash:
+flash: check-board
 ifndef DEVICE
 	$(error DEVICE is not set — example: make flash DEVICE=/dev/sdb)
 endif
 	@test -b "$(DEVICE)" || \
 	    { echo "ERROR: '$(DEVICE)' is not a block device."; exit 1; }
 	$(eval WIC := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
-	    -name "*.wic.bz2" 2>/dev/null | sort -V | tail -1))
+	    -maxdepth 1 -name "*.wic.bz2" 2>/dev/null | sort -V | tail -1))
 	@test -n "$(WIC)" || \
 	    { echo "ERROR: no .wic.bz2 found in $(BUILD_DIR)/tmp/deploy/images/$(MACHINE)"; exit 1; }
+	$(eval WIC_BMAP := $(WIC:.bz2=.bmap))
+	@test -f "$(WIC_BMAP)" || \
+	    { echo "ERROR: no .bmap file found at $(WIC_BMAP)"; exit 1; }
 	@echo "Flashing $(WIC) → $(DEVICE)"
-	bmaptool copy --bmap "$(WIC:.bz2=.bmap)" "$(WIC)" "$(DEVICE)"
+	bmaptool copy --bmap "$(WIC_BMAP)" "$(WIC)" "$(DEVICE)"
 
 # -----------------------------------------------------------------------------
 # Artifact deployment (called automatically; can also be invoked manually)
@@ -382,9 +405,11 @@ deploy-esdk:
 ## Copy .swu OTA package → deploy/swu/BOARD_TS/
 deploy-swu:
 	@out="$(DEPLOY_DIR)/swu/$(BOARD)_$(DEPLOY_TS)"; \
+	 swu="$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
+	 test -f "$$swu" || { echo "ERROR: $$swu not found"; exit 1; }; \
 	 echo "Deploying SWU → $$out ..."; \
 	 mkdir -p "$$out"; \
-	 cp -L "$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu" "$$out/"; \
+	 cp -L "$$swu" "$$out/"; \
 	 echo "  Done: $$out"
 
 # -----------------------------------------------------------------------------
@@ -402,9 +427,9 @@ clean-build:
 clean-docker:
 	docker rmi -f $(KAS_IMAGE) $(SDK_IMAGE) $(ESDK_IMAGE) 2>/dev/null || true
 
-## Remove build/, downloads/, and sstate-cache/
+## Remove build/, downloads/, sstate-cache/, and deploy/
 clean-all: clean-build
-	rm -rf $(DL_DIR) $(SSTATE_DIR)
+	rm -rf $(DL_DIR) $(SSTATE_DIR) $(DEPLOY_DIR)
 
 # -----------------------------------------------------------------------------
 # Utilities
@@ -420,6 +445,31 @@ completion:
 	     printf '\n# Arches Makefile tab-completion\n%s\n' "$$LINE" >> "$$RCFILE"; \
 	     echo "Added to $$RCFILE — run: source $$RCFILE"; \
 	 fi
+
+## Lint: validate Makefile syntax and kas YAML configs
+lint:
+	@echo "Checking Makefile syntax ..."
+	@$(MAKE) -p -q 2>/dev/null | grep -q '^\.PHONY' || { echo 'ERROR: Makefile parse failed'; exit 1; }
+	@echo "Checking kas YAML configs ..."
+	@for f in kas/common.yaml kas/boards/*.yaml kas/repos/*.yaml; do \
+	     python3 -c "import yaml,sys; yaml.safe_load(open('$$f'))" 2>/dev/null \
+	         || { echo "ERROR: $$f is not valid YAML"; exit 1; }; \
+	 done
+	@echo "Lint: OK"
+
+## Test: verify build prerequisites and board configs
+test:
+	@echo "Checking build prerequisites ..."
+	@command -v docker >/dev/null 2>&1 || { echo 'ERROR: docker not found'; exit 1; }
+	@command -v curl >/dev/null 2>&1 || { echo 'ERROR: curl not found'; exit 1; }
+	@echo "Checking board configs ..."
+	@for f in kas/boards/*.yaml; do \
+	     b=$$(basename "$$f" .yaml); \
+	     m=$$(grep '^machine:' "$$f" | awk '{print $$2}'); \
+	     [ -n "$$m" ] || { echo "ERROR: $$f has no machine: field"; exit 1; }; \
+	     echo "  $$b → $$m"; \
+	 done
+	@echo "Test: OK"
 
 # -----------------------------------------------------------------------------
 # Help
@@ -455,9 +505,18 @@ help:
 	@printf "\nClean:\n"
 	@printf "  %-24s %s\n" "clean"              "Remove build/"
 	@printf "  %-24s %s\n" "clean-docker"       "Remove kas/sdk/esdk Docker images"
-	@printf "  %-24s %s\n" "clean-all"          "Remove build/, downloads/, sstate-cache/"
+	@printf "  %-24s %s\n" "clean-all"          "Remove build/, downloads/, sstate-cache/, deploy/"
 	@printf "\nUtilities:\n"
 	@printf "  %-24s %s\n" "completion"         "Install bash tab-completion into ~/.bashrc"
-	@printf "\nBoards:\n"
-	@printf "  jetson-orin-nano   (default) NVIDIA Jetson Orin Nano Super Developer Kit\n"
+	@printf "  %-24s %s\n" "lint"               "Validate Makefile syntax and kas YAML configs"
+	@printf "  %-24s %s\n" "test"               "Verify build prerequisites and board configs"
+	@printf "\nBoards (kas/boards/*.yaml):\n"
+	@for f in kas/boards/*.yaml; do \
+	     b=$$(basename "$$f" .yaml); \
+	     if [ "$$b" = "$(BOARD)" ]; then \
+	         printf "  %-28s (default)\n" "$$b"; \
+	     else \
+	         printf "  %-28s\n" "$$b"; \
+	     fi; \
+	 done
 	@printf "\n"

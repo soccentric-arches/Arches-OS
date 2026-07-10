@@ -43,7 +43,7 @@ _arches_make() {
         shell flash swu
         deploy-images deploy-sdk deploy-esdk deploy-swu
         clean clean-build clean-docker clean-all
-        completion help
+        check-board completion help lint test
     "
 
     # -----------------------------------------------------------------------
