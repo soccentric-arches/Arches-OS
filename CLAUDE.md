@@ -35,16 +35,33 @@ to 4.5 via `kas-container`. Build runs inside Docker; `build/`, `downloads/`,
   bitbake tasks (hours). Confirm it reaches "Running task N of 8148" in the log,
   then let it run separately.
 - `make build` is resumable — killing it mid-build is safe; rerun `make build`.
+- **All build-artifact targets verified working (2026-07-10):** `make build`,
+  `swu`, `sdk`, `esdk`, `sdk-image`, `esdk-image`, `kas-image`, `shell`,
+  `flash` (dry), `deploy-*`, `ensure-*`, `lint`, `test`, `check-board` (all 11
+  boards). `make rebuild-image` shares the `build` path (adds `cleansstate`).
+  Skipped: `make completion` (edits `~/.bashrc`), `make clean*` (destructive).
+- **`make swu` takes a few minutes** — it gzips the full rootfs.ext4 (28 GB
+  logical / ~1.1 GB real, sparse). The unsigned `.swu` (~364 MB) is expected
+  when `meta/meta-arches/swupdate/keys/` is absent; missing `.dtb` is expected
+  for UEFI-boot boards (Orin Nano).
 
 ## Don't
+- **NEVER use a recursive `?=` `$(shell date)` for a version that must stay
+  constant across a multi-minute recipe *and* a recursive sub-make.** `make swu`
+  had `SWU_VERSION ?= $(shell date +%Y%m%d%H%M)` — it re-ran `date` on every
+  expansion, so the `sw-description` version (sed before the gzip), the `.swu`
+  filename (cpio after), and the `deploy-swu` lookup (a separate sub-make)
+  drifted to different minutes and deploy failed ("...1523.swu" built vs
+  "...1525.swu not found"). Fix: freeze with `:=` and pass `SWU_VERSION` to the
+  `deploy-swu` sub-make (mirroring `DEPLOY_TS`).
 - **NEVER leave orphan gitlink (submodule) entries in the tree for `layers/`
   paths.** This repo previously tracked `layers/meta-swupdate` and
   `layers/meta-raspberrypi` as gitlinks (mode 160000) with NO `.gitmodules`.
   Running `make build` with those present caused kas to clone `meta-swupdate`
   AT THE REPO ROOT, overwriting the Arches-OS `.git` origin (→ sbabic/meta-
   swupdate), HEAD (→ scarthgap), and tracked files. Fix applied: `git rm --cached
-  layers/meta-swupdate layers/meta-raspberrypi` (staged, 2026-07-10). Submodules
-  are forbidden by the master CLAUDE.md anyway.
+  layers/meta-swupdate layers/meta-raspberrypi` (committed `617c54f`, 2026-07-10).
+  Submodules are forbidden by the master CLAUDE.md anyway.
 - **`layers/meta-raspberrypi` was spurious** — Arches is Jetson, not RPi. It was
   a leftover from Acadia (the RPi reference project) and not in any kas config.
 - Don't run `make build` to completion inside an interactive session unless you
