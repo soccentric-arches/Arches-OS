@@ -6,15 +6,67 @@ project). All customization lives in `meta/meta-arches` (kas-managed clone of
 `SiliconCentric/meta-arches`). Upstream layers are **never** patched.
 
 - Build: `make build`  (or `make build jetson-orin-nano` — board is a positional arg)
-- Test:  `make test`
-- Lint:  `make lint`
+- Test:  `make test`   (fast host-side checks: docker/curl present + every
+  `kas/boards/*.yaml` has a `machine:` field. NOT a Yocto build — completes in <1s)
+- Lint:  `make lint`   (fast: `make -p -q` parse-checks the Makefile, then
+  `python3 yaml.safe_load`s every kas yaml. NOT a build)
 - Help:  `make help`
 - Shell in build container: `make shell jetson-orin-nano`
 - Clean: `make clean` (removes `build/`); `make clean-all` also removes caches + `deploy/`
 
+## Architecture
+
+**Two nested git repos.** This repo (Arches-OS) only holds the Makefile, kas
+configs, and Dockerfiles — it contains **no Yocto recipes**. The actual project
+layer is a *separate* git repo:
+
+- `meta/meta-arches/` → its own `.git`, remote
+  `git@github.com:SiliconCentric/meta-arches.git`, branch `master`. Recipe
+  changes (new packages, bbappends, sw-description, wks) are committed **here
+  and pushed to meta-arches**, never to Arches-OS. Kas clones/updates it per
+  `kas/repos/meta-arches.yaml`; the working tree is gitignored from Arches-OS
+  (`meta/` is in `.gitignore`).
+- `layers/` → the 4 upstream layers (poky, meta-openembedded, meta-tegra,
+  meta-swupdate) kas checks out. Also gitignored. Never patch.
+
+The image recipe is `arches-image` (`meta-arches/recipes-core/images/arches-image.bb`,
+based on `core-image-base`) — this is `IMAGE_TARGET` and the default `target:`
+in `kas/common.yaml`. `meta-arches` layer: priority 10, `LAYERDEPENDS = core
+tegra`, `LAYERSERIES_COMPAT = scarthgap`. Default board `jetson-orin-nano`
+maps to MACHINE `jetson-orin-nano-devkit` (UEFI + extlinux boot, no U-Boot).
+
+## Boards (11 configs in `kas/boards/`)
+
+Board is a positional arg, not `BOARD=`. The Makefile auto-derives `MACHINE`
+from the `machine:` line in the chosen yaml.
+
+- **SD card** (default): `jetson-orin-nano`
+- **eMMC** (AGX Orin family): `jetson-agx-orin-devkit`,
+  `jetson-agx-orin-devkit-industrial`, `p3737-0000-p3701-0004`,
+  `p3737-0000-p3701-0005`
+- **NVMe**: `jetson-orin-nano-devkit-nvme`, `p3509-a02-p3767-0000`,
+  `p3768-0000-p3767-0000`, `p3768-0000-p3767-0001`,
+  `p3768-0000-p3767-0003`, `p3768-0000-p3767-0004`
+
 KAS image: `arches-kas:latest` (built from `docker/yocto/`). kas release pinned
 to 4.5 via `kas-container`. Build runs inside Docker; `build/`, `downloads/`,
 `sstate-cache/` are bind-mounted host dirs (gitignored).
+
+## OTA / SWUpdate signing
+
+`make swu` is **unsigned by default** (expected when
+`meta/meta-arches/swupdate/keys/swupdate-private.pem` is absent — UEFI-boot
+boards like Orin Nano also ship without a `.dtb`). To sign, drop an RSA-4096
+private key at that path; the Makefile then generates `sw-description.sig` and
+packs a signed `.swu`. Override the version with `make swu SWU_VERSION=1.2.3`.
+
+## Helper scripts (repo root, not part of the make flow)
+
+- `patch_health.py` — patches a *sibling* component: fixes `{{}}` → `{}` and a
+  duplicate `#include` in `../Arches-Server/.../HealthController.cc`. No-op if
+  Arches-Server isn't checked out. Crosses component boundaries — run knowingly.
+- `delete_branches.sh` — deletes every local+remote branch except the protected
+  set (`develop`, `master`, `release`, `release-v0.0.2`). Destructive.
 
 ## Do
 - **kas manages `layers/` — never track its contents.** `layers/` is in
@@ -66,3 +118,7 @@ to 4.5 via `kas-container`. Build runs inside Docker; `build/`, `downloads/`,
   a leftover from Acadia (the RPi reference project) and not in any kas config.
 - Don't run `make build` to completion inside an interactive session unless you
   have hours to spare — kick it off in the background and monitor the log.
+- **Default branch is `main`, not `develop`.** `origin/HEAD` → `main`; both
+  `main` and `develop` exist and are kept at the same commit. The master
+  workflow (§9) assumes fix PRs branch off `develop` — in this repo use `main` as
+  the base unless told otherwise.
