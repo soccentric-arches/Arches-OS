@@ -184,6 +184,7 @@ The default board is `jetson-orin-nano` when no board is specified.
 | `rebuild-image` | Clean sstate for `IMAGE_TARGET`, then rebuild |
 | `sdk` | Build cross-toolchain SDK installer → `deploy/sdk/` (no Docker image) |
 | `esdk` | Build extensible SDK installer → `deploy/esdk/` (no Docker image) |
+| `validate` | Parse BitBake metadata and verify image, SDK, middleware, cloud, debug, and ptest features |
 | `shell` | Interactive kas/BitBake shell inside the build container |
 | `swu` | Package a `.swu` OTA bundle from the latest `rootfs.ext4` |
 | `flash` | Flash the latest `.wic.bz2` to `DEVICE` using bmaptool |
@@ -263,7 +264,8 @@ The image is `arches-image` (`meta-arches/recipes-core/images/arches-image.bb`, 
 ### OTA (`swupdate`, `arches-swupdate-config`)
 - SWUpdate daemon with Mongoose web server on **port 8080**
 - A/B slot switching updates `/boot/extlinux/extlinux.conf` (UEFI boot chain)
-- Boot-check service that logs the active slot on every boot
+- Boot-check service that confirms the new slot and restores the previous
+  extlinux configuration if the requested slot was not booted
 - Production mode is fail-closed: use `ARCHES_SECURE_BOOT=1`, provide
   `ARCHES_SWUPDATE_PUBLIC_KEY` in the KAS configuration, and sign bundles with
   `SWU_PRIV_KEY`; unsigned `.swu` files are rejected by `make swu`

@@ -120,7 +120,7 @@ _ESDK_IMAGE_TAG  := $(lastword  $(subst :, ,$(ESDK_IMAGE)))
         kas-container-script shell flash sdk esdk swu \
         deploy-images deploy-sdk deploy-esdk deploy-swu \
         clean clean-build clean-docker clean-all \
-        check-board completion help lint test
+		check-board completion help lint test validate
 
 all: build
 
@@ -484,6 +484,20 @@ test:
 	 done
 	@echo "Test: OK"
 
+## Validate image feature, SDK, and OTA metadata through BitBake
+validate: ensure-image kas-container-script check-board
+	@$(KAS_RUN) shell $(KAS_CONFIG) -c "set -eu; \
+	    bitbake -e $(IMAGE_TARGET) | grep -q '^ARCHES_MIDDLEWARE=\"1\"'; \
+	    bitbake -e $(IMAGE_TARGET) | grep -q '^ARCHES_CLOUD=\"1\"'; \
+	    bitbake -e $(IMAGE_TARGET) | grep -q '^ARCHES_DEBUG=\"1\"'; \
+	    bitbake -e $(IMAGE_TARGET) | grep -q '^ARCHES_SDK_SUPPORT=\"1\"'; \
+	    bitbake -e $(IMAGE_TARGET) | grep -q 'packagegroup-arches-middleware'; \
+	    bitbake -e $(IMAGE_TARGET) | grep -q 'packagegroup-arches-cloud'; \
+	    bitbake -e $(IMAGE_TARGET) | grep -q 'packagegroup-arches-sdk'; \
+	    bitbake -e $(IMAGE_TARGET) | grep -q 'dev-pkgs'; \
+	    bitbake -e $(IMAGE_TARGET) | grep -q 'ptest-pkgs'; \
+	    echo 'Arches feature validation: OK'"
+
 # -----------------------------------------------------------------------------
 # Help
 # -----------------------------------------------------------------------------
@@ -523,6 +537,7 @@ help:
 	@printf "  %-24s %s\n" "completion"         "Install bash tab-completion into ~/.bashrc"
 	@printf "  %-24s %s\n" "lint"               "Validate Makefile syntax and kas YAML configs"
 	@printf "  %-24s %s\n" "test"               "Verify build prerequisites and board configs"
+	@printf "  %-24s %s\n" "validate"           "Validate image, SDK, middleware, cloud, debug, and OTA metadata"
 	@printf "\nBoards (kas/boards/*.yaml):\n"
 	@for f in kas/boards/*.yaml; do \
 	     b=$$(basename "$$f" .yaml); \
