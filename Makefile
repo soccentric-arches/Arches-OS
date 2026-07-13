@@ -24,6 +24,10 @@ SWU_VERSION      := $(SWU_VERSION)
 # RSA private key for signing .swu packages (optional — absent = unsigned)
 SWU_PRIV_KEY     ?= meta/meta-arches/swupdate/keys/swupdate-private.pem
 
+# Set to 1 for production OTA artifacts. Secure mode refuses to create an
+# unsigned bundle; image builds also require ARCHES_SWUPDATE_PUBLIC_KEY.
+ARCHES_SECURE_BOOT ?= 0
+
 # --- Positional board argument -----------------------------------------------
 # The board name is typed directly after the target — no BOARD= needed:
 #   make image jetson-orin-nano
@@ -292,6 +296,10 @@ esdk: ensure-image kas-container-script check-board
 ## Build a .swu OTA update package from the latest rootfs.ext4 image
 ## Usage: make swu   or   make swu SWU_VERSION=1.2.3
 swu: check-board
+	@if [ "$(ARCHES_SECURE_BOOT)" = "1" ] && [ ! -f "$(SWU_PRIV_KEY)" ]; then \
+	    echo "ERROR: ARCHES_SECURE_BOOT=1 requires SWU_PRIV_KEY=$(SWU_PRIV_KEY)"; \
+	    exit 1; \
+	fi
 	$(eval ROOTFS := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
 	    -name "arches-image-$(MACHINE)*.rootfs.ext4" \
 	    -o -name "core-image-base-$(MACHINE)*.rootfs.ext4" 2>/dev/null \

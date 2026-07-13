@@ -264,6 +264,19 @@ The image is `arches-image` (`meta-arches/recipes-core/images/arches-image.bb`, 
 - SWUpdate daemon with Mongoose web server on **port 8080**
 - A/B slot switching updates `/boot/extlinux/extlinux.conf` (UEFI boot chain)
 - Boot-check service that logs the active slot on every boot
+- Production mode is fail-closed: use `ARCHES_SECURE_BOOT=1`, provide
+  `ARCHES_SWUPDATE_PUBLIC_KEY` in the KAS configuration, and sign bundles with
+  `SWU_PRIV_KEY`; unsigned `.swu` files are rejected by `make swu`
+
+### Bootloader, kernel, and SDK customization
+- `ARCHES_EXTLINUX_APPEND` adds board or product boot arguments to the
+  generated extlinux configuration
+- `ARCHES_KERNEL_CONFIG_FRAGMENTS` accepts deployment-provided kernel config
+  fragments in addition to the Arches hardening fragment
+- Middleware, cloud/telemetry, target debugging, profiling, ptest, and SDK
+  support are enabled in the shared KAS profile and flow into both SDK types
+- `make sdk` and `make esdk` export development headers, debug symbols, source,
+  ptest runner, gdbserver, perf, trace-cmd, and valgrind support
 
 ### gRPC + Protobuf
 - `protobuf`, `protobuf-compiler`, `protobuf-lite`, `grpc`

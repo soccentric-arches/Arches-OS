@@ -31,6 +31,18 @@ local_conf_header:
     # Swupdate specific variables
     SWUPDATE_INIT = "systemd"
 
+    # Shared product capabilities for every board image and SDK.
+    ARCHES_MIDDLEWARE = "1"
+    ARCHES_CLOUD = "1"
+    ARCHES_DEBUG = "1"
+    ARCHES_SDK_SUPPORT = "1"
+    ARCHES_SECURE_BOOT ?= "0"
+
+    # Board and release configurations may override these hooks without
+    # patching upstream layers.
+    ARCHES_EXTLINUX_APPEND ?= ""
+    ARCHES_KERNEL_CONFIG_FRAGMENTS ?= ""
+
     # Jetson Orin Nano: boot via UEFI + extlinux (no U-Boot needed)
     # Accept NVIDIA proprietary licence for BSP components
     LICENSE_FLAGS_ACCEPTED:append = " commercial"
