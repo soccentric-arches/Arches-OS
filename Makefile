@@ -66,7 +66,7 @@ endif
 #   p3768-0000-p3767-0001        Jetson Orin NX 8GB  (P3767-0001 in P3768)
 #   p3768-0000-p3767-0003        Jetson Orin Nano 8GB (P3767-0003 in P3768)
 #   p3768-0000-p3767-0004        Jetson Orin Nano 4GB (P3767-0004 in P3768)
-BOARD            ?= jetson-orin-nano
+BOARD            ?= jetson-agx-orin-devkit
 KAS_CONFIG       := kas/boards/$(BOARD).yaml
 
 # Derive MACHINE automatically from the kas yaml
