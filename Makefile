@@ -123,7 +123,7 @@ _ESDK_IMAGE_TAG  := $(lastword  $(subst :, ,$(ESDK_IMAGE)))
         clean clean-build clean-docker clean-all \
 		check-board completion help lint test validate
 
-all: build
+all: help
 
 # -----------------------------------------------------------------------------
 # kas-container helper script
