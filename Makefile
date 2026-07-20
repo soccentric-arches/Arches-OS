@@ -313,20 +313,6 @@ swu: check-board
 	# --- rootfs ---
 	@gzip -kfc "$(ROOTFS)" > "$(BUILD_DIR)/swu/rootfs.ext4.gz"
 
-	# --- kernel + DTB (required for I3: kernel/DTB included in OTA) ---
-	$(eval KERNEL := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
-	    -maxdepth 1 \
-	    -name "Image" -o -name "Image-$(MACHINE).bin" 2>/dev/null | sort -V | tail -1))
-	$(eval DTB := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
-	    -maxdepth 1 \
-	    -name "*.dtb" 2>/dev/null | sort -V | tail -1))
-	@test -n "$(KERNEL)" \
-	    && { echo "  Found kernel: $(KERNEL)"; cp "$(KERNEL)" "$(BUILD_DIR)/swu/Image"; } \
-	    || echo "WARNING: kernel Image not found — kernel will not be updated in this .swu"
-	@test -n "$(DTB)" \
-	    && { echo "  Found DTB: $(DTB)"; cp "$(DTB)" "$(BUILD_DIR)/swu/$(notdir $(DTB))"; } \
-	    || echo "WARNING: DTB not found — DTB will not be updated in this .swu"
-
 	# --- sw-description ---
 	@sed "s|@@VERSION@@|$(SWU_VERSION)|" \
 	    meta/meta-arches/swupdate/sw-description \
@@ -344,15 +330,13 @@ swu: check-board
 	    echo "Packing SIGNED .swu ..."; \
 	    cd "$(BUILD_DIR)/swu" && \
 	    { printf 'sw-description\nsw-description.sig\npre-install.sh\npost-install.sh\nrootfs.ext4.gz\n'; \
-	      [ -f Image ] && printf 'Image\n'; \
-	      ls *.dtb 2>/dev/null | while read f; do printf '%s\n' "$$f"; done; } \
+	      :; } \
 	      | cpio -ov -H newc > "$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
 	else \
 	    echo "WARNING: No private key found — packing UNSIGNED .swu (run scripts/generate-swu-keys.sh to enable signing)"; \
 	    cd "$(BUILD_DIR)/swu" && \
 	    { printf 'sw-description\npre-install.sh\npost-install.sh\nrootfs.ext4.gz\n'; \
-	      [ -f Image ] && printf 'Image\n'; \
-	      ls *.dtb 2>/dev/null | while read f; do printf '%s\n' "$$f"; done; } \
+	      :; } \
 	      | cpio -ov -H newc > "$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
 	fi
 	@echo "OTA package: $(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"
@@ -487,6 +471,16 @@ test:
 
 ## Validate image feature, SDK, and OTA metadata through BitBake
 validate: ensure-image kas-container-script check-board
+	@test -n "$(IMAGE_TARGET)" || { echo 'ERROR: IMAGE_TARGET is empty'; exit 1; }
+	@grep -q '^    IMAGE_BOOT_FILES = ' kas/common.yaml \
+	    || { echo 'ERROR: kas/common.yaml has no IMAGE_BOOT_FILES setting'; exit 1; }
+	@test -f meta/meta-arches/recipes-support/swupdate/swupdate_%.bbappend
+	@grep -q '^CONFIG_HASH_VERIFY=y' meta/meta-arches/recipes-support/swupdate/files/arches-swupdate.cfg
+	@grep -q '^CONFIG_SIGNED_IMAGES=y' meta/meta-arches/recipes-support/swupdate/files/arches-swupdate.cfg
+	@cmp -s meta/meta-arches/swupdate/pre-install.sh meta/meta-arches/recipes-swupdate/arches-swupdate-config/files/pre-install.sh \
+	    || { echo 'ERROR: packaged and installed pre-install scripts differ'; exit 1; }
+	@cmp -s meta/meta-arches/swupdate/post-install.sh meta/meta-arches/recipes-swupdate/arches-swupdate-config/files/post-install.sh \
+	    || { echo 'ERROR: packaged and installed post-install scripts differ'; exit 1; }
 	@$(KAS_RUN) shell $(KAS_CONFIG) -c "set -eu; \
 	    bitbake -e $(IMAGE_TARGET) | grep -q '^ARCHES_MIDDLEWARE=\"1\"'; \
 	    bitbake -e $(IMAGE_TARGET) | grep -q '^ARCHES_CLOUD=\"1\"'; \

@@ -18,6 +18,9 @@ local_conf_header:
     # SD card image output (wic for SD card, ext4 for SWUpdate OTA)
     IMAGE_FSTYPES = "wic.bz2 wic.bmap ext4"
 
+    # All supported boards use the UEFI/extlinux boot partition source.
+    IMAGE_BOOT_FILES = "Image initrd extlinux/extlinux.conf"
+
     # Shared caches (bind-mounted by Docker)
     DL_DIR     ?= "${TOPDIR}/../cache/downloads"
     SSTATE_DIR ?= "${TOPDIR}/../cache/sstate-cache"
