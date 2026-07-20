@@ -13,8 +13,9 @@ project). All customization lives in `meta/meta-arches` (kas-managed clone of
 - Clean: `make clean` (removes `build/`); `make clean-all` also removes caches + `deploy/`
 
 KAS image: `arches-kas:latest` (built from `docker/yocto/`). kas release pinned
-to 4.5 via `kas-container`. Build runs inside Docker; `build/`, `downloads/`,
-`sstate-cache/` are bind-mounted host dirs (gitignored).
+to 4.5 via `scripts/kas-container`. Build runs inside Docker; `build/`,
+`cache/downloads/`, and `cache/sstate-cache/` are bind-mounted host dirs
+(gitignored).
 
 ## Do
 - **kas manages `layers/` — never track its contents.** `layers/` is in
@@ -23,7 +24,8 @@ to 4.5 via `kas-container`. Build runs inside Docker; `build/`, `downloads/`,
   `meta/meta-arches`), defined in `kas/repos/*.yaml`.
 - **Quick repo-setup check without a full build:** `./kas-container checkout
   kas/boards/<board>.yaml` runs only the kas checkout phase (clone/fetch/checkout
-  repos) — fast, no bitbake. Use it to verify layer setup.
+  repos) — fast, no bitbake. The root command delegates to the maintained copy in
+  `scripts/`.
 - **Recovery if `make build` clobbers the repo root** (kas checks a repo out at
   root instead of `layers/<repo>`): the Arches-OS `.git` objects/refs survive
   (kas *augments* the existing `.git`, it does not destroy it). Recover with:

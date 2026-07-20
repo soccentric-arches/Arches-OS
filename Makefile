@@ -74,8 +74,9 @@ MACHINE          := $(shell grep '^machine:' $(KAS_CONFIG) 2>/dev/null | awk '{p
 
 # --- Directories -------------------------------------------------------------
 BUILD_DIR        ?= $(CURDIR)/build
-DL_DIR           ?= $(CURDIR)/downloads
-SSTATE_DIR       ?= $(CURDIR)/sstate-cache
+CACHE_DIR        ?= $(CURDIR)/cache
+DL_DIR           ?= $(CACHE_DIR)/downloads
+SSTATE_DIR       ?= $(CACHE_DIR)/sstate-cache
 DEPLOY_DIR       ?= $(CURDIR)/deploy
 
 # Single timestamp for the entire invocation — keeps all artifacts in the same
@@ -87,7 +88,7 @@ SDK_INSTALL_DIR  ?= /opt/poky/sdk
 ESDK_INSTALL_DIR ?= /opt/poky/esdk
 
 # --- kas-container -----------------------------------------------------------
-KAS_CONTAINER     := $(CURDIR)/kas-container
+KAS_CONTAINER     := $(CURDIR)/scripts/kas-container
 KAS_CONTAINER_URL  = https://raw.githubusercontent.com/siemens/kas/refs/tags/$(KAS_VERSION)/kas-container
 
 # All KAS operations go through kas-container which handles Docker volume
@@ -128,7 +129,7 @@ all: build
 # kas-container helper script
 # -----------------------------------------------------------------------------
 
-## Download the kas-container script (once, cached in project root)
+## Download the kas-container script into scripts/ when it is absent
 kas-container-script:
 	@if [ ! -f $(KAS_CONTAINER) ]; then \
 	    echo "Downloading kas-container $(KAS_VERSION) ..."; \
@@ -440,9 +441,9 @@ clean-build:
 clean-docker:
 	docker rmi -f $(KAS_IMAGE) $(SDK_IMAGE) $(ESDK_IMAGE) 2>/dev/null || true
 
-## Remove build/, downloads/, sstate-cache/, and deploy/
+## Remove build/, cache/, and deploy/
 clean-all: clean-build
-	rm -rf $(DL_DIR) $(SSTATE_DIR) $(DEPLOY_DIR)
+	rm -rf $(CACHE_DIR) $(DEPLOY_DIR)
 
 # -----------------------------------------------------------------------------
 # Utilities
@@ -451,7 +452,7 @@ clean-all: clean-build
 ## Install bash tab-completion (appends a source line to ~/.bashrc)
 completion:
 	@RCFILE="$$HOME/.bashrc"; \
-	 LINE="source \"$(CURDIR)/arches-make-completion.bash\""; \
+	 LINE="source \"$(CURDIR)/scripts/arches-make-completion.bash\""; \
 	 if grep -qF "$$LINE" "$$RCFILE" 2>/dev/null; then \
 	     echo "Completion already enabled in $$RCFILE"; \
 	 else \
@@ -532,7 +533,7 @@ help:
 	@printf "\nClean:\n"
 	@printf "  %-24s %s\n" "clean"              "Remove build/"
 	@printf "  %-24s %s\n" "clean-docker"       "Remove kas/sdk/esdk Docker images"
-	@printf "  %-24s %s\n" "clean-all"          "Remove build/, downloads/, sstate-cache/, deploy/"
+	@printf "  %-24s %s\n" "clean-all"          "Remove build/, cache/, deploy/"
 	@printf "\nUtilities:\n"
 	@printf "  %-24s %s\n" "completion"         "Install bash tab-completion into ~/.bashrc"
 	@printf "  %-24s %s\n" "lint"               "Validate Makefile syntax and kas YAML configs"

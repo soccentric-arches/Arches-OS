@@ -19,8 +19,8 @@ local_conf_header:
     IMAGE_FSTYPES = "wic.bz2 wic.bmap ext4"
 
     # Shared caches (bind-mounted by Docker)
-    DL_DIR     ?= "${TOPDIR}/../downloads"
-    SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"
+    DL_DIR     ?= "${TOPDIR}/../cache/downloads"
+    SSTATE_DIR ?= "${TOPDIR}/../cache/sstate-cache"
 
     # SWUpdate: enable built-in Mongoose web server and progress IPC
     PACKAGECONFIG:append:pn-swupdate = " webserver"
