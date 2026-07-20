@@ -17,9 +17,9 @@ The layout separates four concerns:
 4. Generated output: build state, downloads, shared state, deploy artifacts,
    and temporary files.
 
-The repository-specific product-layer directory is currently named
-`meta/meta-arches`. When this layout is reused, rename that directory to the
-new product-layer name and update its kas repository path and layer name.
+The product-layer directory is represented here as `meta/<product-layer>`.
+When this layout is reused, replace the placeholder with the new product-layer
+name and update its kas repository path and layer name.
 
 1. Top-Level Layout
 -------------------
