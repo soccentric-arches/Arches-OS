@@ -65,6 +65,6 @@ to 4.5 via `scripts/kas-container`. Build runs inside Docker; `build/`,
   layers/meta-swupdate layers/meta-raspberrypi` (committed `617c54f`, 2026-07-10).
   Submodules are forbidden by the master CLAUDE.md anyway.
 - **`layers/meta-raspberrypi` was spurious** — Arches is Jetson, not RPi. It was
-  a leftover from Acadia (the RPi reference project) and not in any kas config.
+  a leftover from an earlier reference template and not in any kas config.
 - Don't run `make build` to completion inside an interactive session unless you
   have hours to spare — kick it off in the background and monitor the log.

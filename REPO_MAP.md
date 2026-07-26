@@ -13,7 +13,7 @@ No top-level README, but a working `kas` + Docker Yocto build for **NVIDIA Jetso
 
 **KAS image:** `arches-kas:latest` (built from `docker/yocto/`), kas release pinned to 4.5 via `scripts/kas-container`. `build/`, `cache/downloads/`, `cache/sstate-cache/` are gitignored bind-mounted host dirs.
 
-**Known incident (documented in CLAUDE.md):** this repo previously tracked `layers/meta-swupdate` and `layers/meta-raspberrypi` as orphan gitlink (submodule, mode 160000) entries with no `.gitmodules`. Running `make build` with those present caused kas to clone `meta-swupdate` **at the repo root**, overwriting this repo's own `.git` origin/HEAD/tracked files. Fixed via `git rm --cached` (commit `617c54f`, 2026-07-10); recovery steps are documented if it recurs. `layers/meta-raspberrypi` was a leftover from the Acadia (Raspberry Pi) template and was never wired into any kas config — Arches is Jetson, not RPi.
+**Known incident (documented in CLAUDE.md):** this repo previously tracked `layers/meta-swupdate` and `layers/meta-raspberrypi` as orphan gitlink (submodule, mode 160000) entries with no `.gitmodules`. Running `make build` with those present caused kas to clone `meta-swupdate` **at the repo root**, overwriting this repo's own `.git` origin/HEAD/tracked files. Fixed via `git rm --cached` (commit `617c54f`, 2026-07-10); recovery steps are documented if it recurs. `layers/meta-raspberrypi` was a leftover from an earlier Raspberry Pi reference template and was never wired into any kas config — Arches is Jetson, not RPi.
 
 **Nested git clones (not submodules):** `layers/poky`, `layers/meta-openembedded`, `layers/meta-tegra`, `layers/meta-swupdate`, `meta/meta-arches` — each is a separate `.git` checked out by kas.
 
