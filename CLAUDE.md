@@ -68,3 +68,10 @@ to 4.5 via `scripts/kas-container`. Build runs inside Docker; `build/`,
   a leftover from an earlier reference template and not in any kas config.
 - Don't run `make build` to completion inside an interactive session unless you
   have hours to spare — kick it off in the background and monitor the log.
+<!-- BEGIN loop-engine -->
+## Do's and Don'ts (maintained by the Loop Engine)
+
+*Appended by the Loop Engine on loop close; curated by a human when approving a
+loop out of `in-review/`. Nothing outside this fence is engine-writable.*
+
+<!-- END loop-engine -->
