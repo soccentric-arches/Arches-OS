@@ -17,6 +17,8 @@ KAS image: `arches-kas:latest` (built from `docker/yocto/`). kas release pinned 
 
 # Do
 
+* All scripts must be stored in script folder 
+
 * kas manages `layers/` - never track its contents. `layers/` is in `.gitignore`. The 5 kas repos (poky, meta-openembedded, meta-tegra, meta-swupdate, meta-arches) are checked out by kas into `layers/` (and `meta/meta-arches`), defined in `kas/repos/*.yaml`.
 * Quick repo-setup check without a full build: `./kas-container checkout kas/boards/<board>.yaml` runs only the kas checkout phase (clone/fetch/checkout repos) - fast, no bitbake. The root command delegates to the maintained copy in `scripts/`.
 * Recovery if `make build` clobbers the repo root (kas checks a repo out at root instead of `layers/<repo>`): the Arches-OS `.git` objects/refs survive (kas augments the existing `.git`, it does not destroy it). Recover with: `git checkout develop` -> `git remote set-url origin git@github.com:SiliconCentric/Arches-OS.git` -> `git fetch origin --prune` -> `git branch -D scarthgap`. Verify `git rev-parse develop` == `297f259` and `origin` == SiliconCentric/Arches-OS.

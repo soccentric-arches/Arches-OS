@@ -114,7 +114,7 @@ _ESDK_IMAGE_TAG  := $(lastword  $(subst :, ,$(ESDK_IMAGE)))
 # =============================================================================
 # Targets
 # =============================================================================
-.PHONY: all build rebuild-image \
+.PHONY: all build rebuild-image build-all \
         kas-image image ensure-image \
         sdk-image ensure-sdk-image \
         esdk-image ensure-esdk-image \
@@ -275,6 +275,12 @@ rebuild-image: ensure-image kas-container-script check-board
 	$(KAS_RUN) shell $(KAS_CONFIG) -c "bitbake -c cleansstate $(IMAGE_TARGET)"
 	$(KAS_RUN) build $(KAS_CONFIG)
 	@$(MAKE) --no-print-directory deploy-images DEPLOY_TS=$(DEPLOY_TS)
+
+## Build image+sdk+esdk for every board, continuing past failures, and emit
+## a pass/fail report table under build/reports/.
+## Usage: make build-all   or   make build-all BUILD_ALL_ARGS="-b jetson-orin-nano -t build"
+build-all: ensure-image kas-container-script
+	./scripts/build-all.sh $(BUILD_ALL_ARGS)
 
 ## Interactive shell inside the KAS build container
 shell: ensure-image kas-container-script check-board
@@ -514,6 +520,7 @@ help:
 	@printf "  %-24s %s\n" "shell"              "Open an interactive kas build shell"
 	@printf "  %-24s %s\n" "swu"                "Build and deploy an OTA package"
 	@printf "  %-24s %s\n" "flash"              "Flash a validated WIC image to DEVICE"
+	@printf "  %-24s %s\n" "build-all"          "Build image+sdk+esdk for every board; pass/fail report"
 	@printf "\nDocker images:\n"
 	@printf "  %-24s %s\n" "kas-image"          "Build/rebuild KAS build container  (docker/yocto/)"
 	@printf "  %-24s %s\n" "ensure-image"       "Build the KAS image only when absent"
