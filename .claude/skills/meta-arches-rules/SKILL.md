@@ -82,6 +82,15 @@ Verify `git rev-parse develop` matches the expected commit and `origin` points t
 
 Exit codes follow the fleet contract: `0` pass, `1`-`76` fail, `77` means a check never ran (missing toolchain) — which is not a pass. This script is human-owned by the Loop Engine; do not edit it — fix the underlying issue instead, or raise it in the loop's Lessons Learned.
 
+## Enforcement Hooks
+
+The rules above are guidance; `.claude/settings.json` also wires up hooks in `.claude/hooks/` that enforce the highest-risk ones deterministically, independent of whether the model has loaded this skill:
+
+- `pre-tool-use-guard.py` (`PreToolUse`) — denies edits under `layers/`, denies `git submodule add`, and asks for confirmation before force-push, `git reset --hard`, `bitbake -c cleanall`, `make clean-all`, and other `rm -rf` usage.
+- `post-tool-use-lint.py` (`PostToolUse`) — runs `make lint` automatically after any edit under `kas/` or to the `Makefile` and surfaces failures immediately, ahead of the `Stop` gate.
+- `session-start-context.py` (`SessionStart`) — reports branch, origin, build state, and whether a `bitbake-server` is already running, at the start of every session.
+- The existing `Stop` hook still runs `./.claude/validate.sh quick` at the end of every turn.
+
 ## Review Checklist
 
 Before declaring a meta-arches or Arches-OS change complete, verify:
