@@ -52,6 +52,75 @@ make clean                    # removes build/
 make clean-all                # also removes caches + deploy/
 ```
 
+## Adding a New Recipe from a Git URL (often private, SSH/`git://`)
+
+When asked to add a recipe for source hosted at a GitHub URL — especially a
+private repo reachable only over SSH or the `git://` protocol — follow this
+sequence rather than guessing at fetcher syntax:
+
+1. **Place it under `meta/meta-arches`**, in the matching category directory
+   (`recipes-bsp`, `recipes-connectivity`, `recipes-core`, `recipes-kernel`,
+   `recipes-support`, `recipes-swupdate`, or a new `recipes-<category>/` if
+   none fits), as `recipes-<category>/<pn>/<pn>_<version>.bb`. Never place it
+   in `layers/` or an upstream checkout.
+2. **Convert the URL to BitBake fetcher syntax.** A private repo URL is
+   usually given in one of these forms — convert it, don't use it verbatim:
+   - scp-like SSH (`git@github.com:ORG/REPO.git`) →
+     `SRC_URI = "git://git@github.com/ORG/REPO.git;protocol=ssh;branch=<default-branch>"`
+   - explicit `git://` over SSH → same `;protocol=ssh` form above.
+   - Public HTTPS repo → `;protocol=https` instead; do not put tokens/credentials
+     in `SRC_URI` — if HTTPS auth is required, that's a sign the fetch should
+     use SSH instead.
+   - Always add `;name=<pn>` when the recipe fetches more than one URI, and
+     set `S = "${WORKDIR}/git"` (or `${S}/<subdir>` if the recipe lives in a
+     subdirectory of the repo).
+3. **Pin `SRCREV` to a specific commit hash**, not a floating branch head —
+   `branch=` is still required by the fetcher for metadata, but the checkout
+   itself must be reproducible. Do not use `SRCREV = "${AUTOREV}"` outside of
+   throwaway/dev testing.
+4. **SSH access inside the build container**: the `kas-container` workflow
+   already mounts `KAS_SSH_DIR=$(HOME)/.ssh` into the container (see the
+   Makefile's `KAS_ENV`), so `do_fetch` for a private SSH `SRC_URI` uses the
+   same keys/agent as the kas repo checkouts. Before adding the recipe,
+   confirm host SSH access works (`ssh -T git@github.com`) — if that fails,
+   fetching inside the container will fail identically; it is not a recipe
+   bug.
+5. Fill in `LICENSE`, `LIC_FILES_CHKSUM`, `DEPENDS`/`RDEPENDS`, and
+   `do_install`/`FILES:${PN}` as usual per the `yocto-best-practices` skill.
+   Do not add the package's own repo credentials or private keys into the
+   recipe or `meta/meta-arches` — only reference the existing mounted SSH dir.
+
+### Testing and Validating a Newly Added Recipe
+
+`make lint`/`make test` only check the Makefile and kas YAML — they do not
+parse individual recipes. Validate a new recipe with BitBake itself, from
+narrowest to widest, before trusting it in a full image build:
+
+```sh
+./.claude/validate.sh quick                 # fast sanity gate first
+make shell jetson-orin-nano                 # open a shell in the build container
+#   inside the container shell:
+bitbake-layers show-recipes <pn>            # confirms the recipe parses and is visible
+bitbake -c fetch <pn>                       # verifies the SSH/git fetch itself succeeds
+bitbake -c unpack <pn>                      # verifies SRC_URI/S layout is correct
+bitbake <pn>                                # builds the recipe standalone
+```
+
+Only after the standalone recipe build succeeds, add it to the image (e.g.
+`IMAGE_INSTALL:append` in the relevant image recipe/`.bbappend`) and validate
+at the image level:
+
+```sh
+make build jetson-orin-nano                 # or: make rebuild-image to force a clean rebuild
+make lint
+make test
+./.claude/validate.sh full
+```
+
+If `-c fetch` fails with an auth/permission error, treat it as an SSH access
+problem (see step 4 above), not a `SRC_URI` syntax problem — re-check host SSH
+access before changing the recipe.
+
 ## Arches-Specific Checks
 
 - Confirm board YAML files have the expected `machine:` field and compose the intended layers.
