@@ -15,6 +15,6 @@ approximate):
 Deployed artifacts:
 !`ls -1 deploy/images deploy/sdk deploy/esdk deploy/swu 2>/dev/null`
 
-Summarize: current branch/dirty state, whether `build/`, `cache/downloads/`,
-`cache/sstate-cache/`, and `deploy/` exist and their approximate sizes, and
+Summarize: current branch/dirty state, whether build/, cache/downloads/,
+cache/sstate-cache/, and deploy/ exist and their approximate sizes, and
 what's already been deployed.

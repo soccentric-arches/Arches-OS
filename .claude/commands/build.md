@@ -12,4 +12,4 @@ log file and disown, or use an async terminal) rather than waiting inline:
 
 Once launched, confirm the build reaches "Running task N of 8148" (or similar)
 in the log before considering it under way, then report status without
-polling continuously. `make build` is resumable — it is safe to stop and rerun.
+polling continuously. make build is resumable — it is safe to stop and rerun.
