@@ -1,14 +1,24 @@
 # Arches-OS — specs
 
-Parent project: Arches (target hardware: NVIDIA Jetson, Tegra family, L4T/JetPack OS, with an STM32 real-time co-processor)
-Leaf type: `<Project>-OS`
+Target: NVIDIA Jetson (Tegra, L4T/JetPack).
+Stack: Yocto + kas, built inside Docker.
 
-## What this is
+The image build for the Jetson platform. The substrate Client, Configuration and the HAL/gRPC
+middleware all run inside.
 
-Arches-OS is the Yocto + kas build for the NVIDIA Jetson platform (Arches project). All customization lives in `meta/meta-arches` (kas-managed clone of `SiliconCentric/meta-arches`). Upstream layers are never patched.
+## Layout
 
-KAS image: `arches-kas:latest` (built from `docker/yocto/`). kas release pinned to 4.5 via `scripts/kas-container`. Build runs inside Docker; `build/`, `cache/downloads/`, and `cache/sstate-cache/` are bind-mounted host dirs (gitignored).
+* `meta/meta-arches` — all Arches customization. A kas-managed clone of `SiliconCentric/meta-arches`. Upstream layers are never patched.
+* `kas/repos/*.yaml` — defines the 5 kas repos: poky, meta-openembedded, meta-tegra, meta-swupdate, meta-arches.
+* `kas/boards/<board>.yaml` — per-board config. 11 boards.
+* `layers/` — checked out by kas. Gitignored, never tracked.
+* `scripts/` — all scripts, including the maintained `kas-container` copy.
+* `docker/yocto/` — builds the `arches-kas:latest` image. kas release pinned to 4.5.
+* `build/`, `cache/downloads/`, `cache/sstate-cache/` — host bind mounts, gitignored.
 
-kas manages `layers/` — never track its contents. `layers/` is in `.gitignore`. The 5 kas repos (poky, meta-openembedded, meta-tegra, meta-swupdate, meta-arches) are checked out by kas into `layers/` (and `meta/meta-arches`), defined in `kas/repos/*.yaml`.
+## Coupling
 
-Part of the Arches project in the project-managers fleet. See `docs/project-managers.md` for the full 9-project / 8-leaf hierarchy and shared conventions.
+The dependency on the rest of the fleet is implicit, not code-level: this image provisions the
+gRPC/Protobuf/libgpiod middleware (`packagegroup-arches-middleware`) that Client, Server and the
+HAL's on-device pieces need at runtime, and pulls in Arches-Configuration as the `meta-webconfig`
+layer. Grepping this repo for "HAL" or "STM32" will not find the coupling.
