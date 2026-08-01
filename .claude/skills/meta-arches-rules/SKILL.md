@@ -10,7 +10,7 @@ Use this skill for any change inside the Arches-OS repository: kas configuration
 
 ## Repository Boundary
 
-Arches-OS is a kas-managed Yocto build for NVIDIA Jetson boards. Keep project customization in meta/meta-arches, the checked-out SiliconCentric meta-arches layer. Treat upstream layers (poky, meta-openembedded, meta-tegra, meta-swupdate) as immutable dependencies.
+Arches-OS is a kas-managed Yocto build for NVIDIA Jetson boards. Keep project customization in meta/meta-arches, the checked-out SiliconCentric meta-arches layer. Treat upstream layers (poky, meta-openembedded, meta-tegra, meta-swupdate) as immutable dependencies. For the full directory layout and the (implicit, non-code) coupling to Client/Configuration/HAL, see `.claude/project_specs.md`.
 
 ### Do
 

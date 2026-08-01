@@ -46,6 +46,10 @@ local_conf_header:
     ARCHES_EXTLINUX_APPEND ?= ""
     ARCHES_KERNEL_CONFIG_FRAGMENTS ?= ""
 
+    # Central hand-editable kernel / device-tree / bootloader feature config.
+    # Edit meta/meta-arches/arches.inc to add or remove features.
+    require arches.inc
+
     # Jetson Orin Nano: boot via UEFI + extlinux (no U-Boot needed)
     # Accept NVIDIA proprietary licence for BSP components
     LICENSE_FLAGS_ACCEPTED:append = " commercial"
