@@ -121,6 +121,52 @@ If -c fetch fails with an auth/permission error, treat it as an SSH access
 problem (see step 4 above), not a SRC_URI syntax problem — re-check host SSH
 access before changing the recipe.
 
+## Adding or Removing a Kernel Config Option
+
+Already fully wired -- no new recipe needed. Drop a `.cfg` fragment (its
+`CONFIG_*` lines) into `recipes-kernel/linux/files/<name>.cfg`, then add
+`<name>` to `ARCHES_KERNEL_FEATURES` in `meta/meta-arches/arches.inc`. Remove
+by deleting the name from that list (and the file, if no longer needed). The
+bbappend at `recipes-kernel/linux/linux-jammy-nvidia-tegra_%.bbappend` merges
+every listed fragment into `KERNEL_CONFIG_FRAGMENTS` automatically.
+
+## Adding or Removing a Custom Device-Tree Node (Overlay)
+
+Distinct from picking among NVIDIA's own device trees (`ARCHES_DEVICETREE`,
+`ARCHES_DEVICETREE_OVERLAYS`, `ARCHES_FLASH_OVERLAYS` -- the "apply" lists).
+This is for authoring nodes that don't exist in NVIDIA's shipped `.dts`
+source at all.
+
+1. Copy `recipes-kernel/nvidia-kernel-oot/files/example-overlay.dts.template`
+   to `<name>.dts` in that same `files/` directory and edit the `target`
+   label and node contents.
+2. Add `<name>` to `ARCHES_DEVICETREE_OVERLAY_SOURCES` in
+   `meta/meta-arches/arches.inc` (this makes it *buildable*).
+3. Also add `<name>` to `ARCHES_DEVICETREE_OVERLAYS` (applied from the
+   rootfs at boot) or `ARCHES_FLASH_OVERLAYS` (applied by the UEFI
+   bootloader from SPI) to actually *apply* it -- listing it in step 2 alone
+   only compiles it.
+4. To remove: delete the name from every list above and delete the `.dts`.
+
+Mechanism: the `nvidia-kernel-oot_%.bbappend` cpp-preprocesses and compiles
+each named overlay with `dtc`, dropping the resulting `.dtbo` into the same
+`${B}/kernel-devicetree/generic-dts/dtbs/` directory the vendor's own
+`oe_runmake dtbs` populates -- so it rides along through the existing
+`do_install`/sysroot/deploy sweep untouched, without needing any change to
+`l4t-launcher-extlinux` or `image_types_tegra`.
+
+Caveat -- not build-verified in this environment (no build has run here, no
+Docker available): the cpp step only searches `${WORKDIR}` and
+`${STAGING_KERNEL_DIR}/include` by default. If an overlay `#include`s a
+vendor SoC dtsi (pinmux/IRQ macros etc.), add its path to
+`ARCHES_DEVICETREE_OVERLAY_INCLUDES` as a full `-I/path` token -- find it
+with `make shell <board>`, then inside the container
+`bitbake -e nvidia-kernel-oot | grep ^S=` and look under `hardware/nvidia/`.
+Verify the first real overlay actually compiles
+(`bitbake -c compile nvidia-kernel-oot -f` inside the container, then check
+`.../kernel-devicetree/generic-dts/dtbs/<name>.dtbo` exists) before trusting
+this for anything board-critical.
+
 ## Arches-Specific Checks
 
 - Confirm board YAML files have the expected machine: field and compose the intended layers.
