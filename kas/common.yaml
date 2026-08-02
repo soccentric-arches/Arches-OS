@@ -5,6 +5,7 @@ header:
     - repos/meta-openembedded.yaml
     - repos/meta-tegra.yaml
     - repos/meta-swupdate.yaml
+    - repos/meta-rust-bin.yaml
     - repos/meta-arches.yaml
 
 distro: poky
@@ -49,6 +50,14 @@ local_conf_header:
     # Central hand-editable kernel / device-tree / bootloader feature config.
     # Edit meta/meta-arches/arches.inc to add or remove features.
     require arches.inc
+
+    # webconfigd (Arches-Configuration) has MSRV 1.85, well past the
+    # rust-native 1.75.0 poky/scarthgap ships. meta-rust-bin provides a
+    # prebuilt, opt-in toolchain (webconfigd.bb inherits cargo_bin instead
+    # of cargo) without touching poky's own rust-native/cargo-native, so
+    # every other cargo-based recipe in this build is unaffected.
+    PREFERRED_VERSION:rust-bin-cross-aarch64 = "1.85.1"
+    PREFERRED_VERSION:cargo-bin-cross-aarch64 = "1.85.1"
 
     # Jetson Orin Nano: boot via UEFI + extlinux (no U-Boot needed)
     # Accept NVIDIA proprietary licence for BSP components

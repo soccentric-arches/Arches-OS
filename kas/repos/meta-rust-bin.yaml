@@ -1,0 +1,11 @@
+header:
+  version: 14
+
+repos:
+  meta-rust-bin:
+    url: https://github.com/rust-embedded/meta-rust-bin
+    branch: master
+    commit: 54721fa1c7a4edaba7fb63cdbcaf0c6253c5fa3a
+    path: layers/meta-rust-bin
+    layers:
+      .:
