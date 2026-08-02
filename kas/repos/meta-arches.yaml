@@ -4,7 +4,7 @@ header:
 repos:
   meta-arches:
     url: git@github.com:SiliconCentric/meta-arches.git
-    commit: c0caedf8f9259d080d2840b3a9e376456c35a49c
+    branch: master
     path: meta/meta-arches
     layers:
       .:
