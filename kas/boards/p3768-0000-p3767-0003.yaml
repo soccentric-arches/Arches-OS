@@ -1,7 +1,7 @@
 header:
   version: 14
   includes:
-    - ../common.yaml
+    - kas/common.yaml
 
 # Jetson Orin Nano 8GB (P3767-0003 module in P3768-0000 carrier)
 machine: p3768-0000-p3767-0003

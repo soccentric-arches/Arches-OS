@@ -1,0 +1,5 @@
+{
+  "skills": [".pi/skills"],
+  "extensions": [".pi/extensions/arches-agent.ts"],
+  "enableSkillCommands": true
+}

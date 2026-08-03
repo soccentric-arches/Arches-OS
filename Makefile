@@ -477,7 +477,8 @@ test:
 
 ## Validate image feature, SDK, and OTA metadata through BitBake
 validate:
-	@echo 'Validation done'
+	@echo "Running validation gate (quick)..."
+	@.claude/validate.sh quick
 
 # -----------------------------------------------------------------------------
 # Help

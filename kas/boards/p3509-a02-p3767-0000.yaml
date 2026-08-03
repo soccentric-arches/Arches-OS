@@ -1,7 +1,7 @@
 header:
   version: 14
   includes:
-    - ../common.yaml
+    - kas/common.yaml
 
 # Jetson Orin NX 16GB module in P3509-A02 carrier board
 machine: p3509-a02-p3767-0000
