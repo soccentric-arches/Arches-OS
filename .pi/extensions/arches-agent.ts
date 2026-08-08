@@ -139,8 +139,13 @@ export default function (pi: ExtensionAPI) {
       }
 
       try {
-        // Quick syntax check first
-        execSync("make -p -q 2>/dev/null", { cwd: PROJECT_ROOT, timeout: 30_000 });
+        // Quick syntax check first. Pipe through grep to mask make -q's exit 1
+        // for phony targets (same pattern as the Makefile lint target) —
+        // otherwise execSync throws on a perfectly valid Makefile.
+        execSync("make -p -q 2>/dev/null | grep -q '^\\.PHONY'", {
+          cwd: PROJECT_ROOT,
+          timeout: 30_000,
+        });
 
         // Launch build in background, capture initial output
         const result = execSync(`make build ${board} 2>&1`, {
