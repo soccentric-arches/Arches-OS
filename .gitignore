@@ -4,3 +4,4 @@ layers/
 meta/
 .vscode/
 deploy/
+docker/esdk/ssh/
