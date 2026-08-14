@@ -10,7 +10,7 @@ Yocto + kas image build for the Jetson platform. Produces the OS that Client, Co
 ## Repository Layout
 
 ```
-meta/meta-arches/          # All Arches customization (SiliconCentric/meta-arches)
+meta/meta-arches/          # All Arches customization (soccentric-arches/meta-arches)
 kas/repos/*.yaml           # 5 kas repos: poky, meta-openembedded, meta-tegra, meta-swupdate, meta-arches
 kas/boards/<board>.yaml    # Per-board config (11 boards)
 kas/common.yaml            # Shared kas config
@@ -100,7 +100,7 @@ If kas checks out a repo at root instead of `layers/<repo>`:
 
 ```bash
 git checkout develop
-git remote set-url origin git@github.com:SiliconCentric/Arches-OS.git
+git remote set-url origin git@github.com:soccentric-arches/Arches-OS.git
 git fetch origin --prune
 git branch -D scarthgap
 ```

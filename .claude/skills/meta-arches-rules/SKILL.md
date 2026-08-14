@@ -181,12 +181,12 @@ If kas checks a repository out at the repo root instead of layers/<repo>, the Ar
 
 ```sh
 git checkout develop
-git remote set-url origin git@github.com:SiliconCentric/Arches-OS.git
+git remote set-url origin git@github.com:soccentric-arches/Arches-OS.git
 git fetch origin --prune
 git branch -D scarthgap
 ```
 
-Verify git rev-parse develop matches the expected commit and origin points to SiliconCentric/Arches-OS.
+Verify git rev-parse develop matches the expected commit and origin points to soccentric-arches/Arches-OS.
 
 ## Validation Gate — .claude/validate.sh
 

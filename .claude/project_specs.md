@@ -8,7 +8,7 @@ middleware all run inside.
 
 ## Layout
 
-* `meta/meta-arches` — all Arches customization. A kas-managed clone of `SiliconCentric/meta-arches`. Upstream layers are never patched.
+* `meta/meta-arches` — all Arches customization. A kas-managed clone of `soccentric-arches/meta-arches`. Upstream layers are never patched.
 * `kas/repos/*.yaml` — defines the 5 kas repos: poky, meta-openembedded, meta-tegra, meta-swupdate, meta-arches.
 * `kas/boards/<board>.yaml` — per-board config. 11 boards.
 * `layers/` — checked out by kas. Gitignored, never tracked.

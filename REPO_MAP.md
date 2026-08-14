@@ -1,13 +1,13 @@
 # Arches-OS
 
-**Remote:** `git@github.com:SiliconCentric/Arches-OS.git`
+**Remote:** `git@github.com:soccentric-arches/Arches-OS.git`
 **Parent project:** [Arches](../Arches.md) (target hardware: **NVIDIA Jetson** (Tegra family, L4T/JetPack OS) application processor with an **STM32** real-time co-processor.)
 **Leaf type:** `<Project>-OS`
 **Status:** REAL — actively built out
 
 No top-level README, but a working `kas` + Docker Yocto build for **NVIDIA Jetson** with an extensive operational `CLAUDE.md`.
 
-**Board:** default `jetson-orin-nano` (positional arg to `make build`). All platform customization lives in a kas-managed `meta/meta-arches` layer (clone of `SiliconCentric/meta-arches`); upstream layers (`poky`, `meta-openembedded`, `meta-tegra`, `meta-swupdate`) are checked out by kas into a **gitignored** `layers/` directory and must never be hand-edited or tracked.
+**Board:** default `jetson-orin-nano` (positional arg to `make build`). All platform customization lives in a kas-managed `meta/meta-arches` layer (clone of `soccentric-arches/meta-arches`); upstream layers (`poky`, `meta-openembedded`, `meta-tegra`, `meta-swupdate`) are checked out by kas into a **gitignored** `layers/` directory and must never be hand-edited or tracked.
 
 **Targets:** `make build` (~8000+ bitbake tasks, hours, resumable if interrupted), `make test`, `make lint`, `make shell [board]`, `make swu` (OTA package — gzips the full rootfs, ~364MB unsigned if `meta/meta-arches/swupdate/keys/` is absent), `make sdk`/`esdk`/`sdk-image`/`esdk-image`, `make flash`, `make deploy-*`, `make clean`/`clean-all`.
 

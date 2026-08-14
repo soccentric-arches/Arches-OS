@@ -21,7 +21,7 @@ HAL/gRPC middleware all run inside.
 * Confirm `make build` reaches "Running task N of 8148" in the log before walking away, then let it run separately.
 * Kick long builds off in the background. `make build` is resumable — killing it mid-build is safe, just rerun.
 * Expect `make swu` to take minutes: it gzips the full `rootfs.ext4` (28 GB logical, ~1.1 GB real, sparse). An unsigned ~364 MB `.swu` is correct when `meta/meta-arches/swupdate/keys/` is absent, and a missing `.dtb` is expected for UEFI-boot boards like Orin Nano.
-* Recover a clobbered repo root (kas checking a repo out at root instead of `layers/<repo>`) with: `git checkout develop` -> `git remote set-url origin git@github.com:SiliconCentric/Arches-OS.git` -> `git fetch origin --prune` -> `git branch -D scarthgap`. The `.git` objects and refs survive; kas augments `.git`, it does not destroy it.
+* Recover a clobbered repo root (kas checking a repo out at root instead of `layers/<repo>`) with: `git checkout develop` -> `git remote set-url origin git@github.com:soccentric-arches/Arches-OS.git` -> `git fetch origin --prune` -> `git branch -D scarthgap`. The `.git` objects and refs survive; kas augments `.git`, it does not destroy it.
 
 ## Don't
 
