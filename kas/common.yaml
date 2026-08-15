@@ -6,6 +6,7 @@ header:
     - kas/repos/meta-tegra.yaml
     - kas/repos/meta-swupdate.yaml
     - kas/repos/meta-rust-bin.yaml
+    - kas/repos/meta-virtualization.yaml
     - kas/repos/meta-arches.yaml
 
 distro: poky
@@ -41,6 +42,15 @@ local_conf_header:
     ARCHES_DEBUG = "1"
     ARCHES_SDK_SUPPORT = "1"
     ARCHES_SECURE_BOOT ?= "0"
+
+    # Jetson hardware enablement — AI/GPU compute, camera/video/codec,
+    # power/thermal, and container/GPU-passthrough stacks. Each is opt-in per
+    # board/product profile (set to "0" in a board or release config to drop
+    # the corresponding packagegroup from the image).
+    ARCHES_AI_COMPUTE = "1"
+    ARCHES_CAMERA = "1"
+    ARCHES_POWER = "1"
+    ARCHES_CONTAINERS = "1"
 
     # Board and release configurations may override these hooks without
     # patching upstream layers.
