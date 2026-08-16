@@ -1,12 +1,12 @@
 ---
 name: yocto-best-practices
-description: 'Use when working on any Yocto or BitBake project: writing or reviewing recipes, layers, classes, images, machine configuration, patches, or dependency declarations. Covers general reproducible-build practices, recipe hygiene, and layer conventions independent of any specific repository. For Arches-OS or SiliconCentric meta-arches repository-specific rules, use the meta-arches-rules skill instead.'
+description: 'Use when working on any Yocto or BitBake project: writing or reviewing recipes, layers, classes, images, machine configuration, patches, or dependency declarations. Covers general reproducible-build practices, recipe hygiene, and layer conventions independent of any specific repository. For Arches-OS or soccentric-arches meta-arches repository-specific rules, use the meta-arches-rules skill instead.'
 argument-hint: 'Describe the Yocto or BitBake recipe, layer, or build task to review or implement.'
 ---
 
 # Yocto Best Practices
 
-Use this skill when writing or reviewing BitBake recipes, classes, layers, images, or machine/distro configuration in any Yocto project. If the work is specifically in the Arches-OS repository or the SiliconCentric meta-arches layer, also load the meta-arches-rules skill for repository-specific boundaries and commands.
+Use this skill when writing or reviewing BitBake recipes, classes, layers, images, or machine/distro configuration in any Yocto project. If the work is specifically in the Arches-OS repository or the soccentric-arches meta-arches layer, also load the meta-arches-rules skill for repository-specific boundaries and commands.
 
 ### Do
 

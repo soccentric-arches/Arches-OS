@@ -1,6 +1,6 @@
 ---
 name: meta-arches-rules
-description: 'Use when working in the Arches-OS repository or the SiliconCentric meta-arches layer: kas board/repo configuration, the Makefile build workflow, SWUpdate packaging, or the layers/ tree. Covers repository boundary rules, the meta-arches do and do not list, kas/build commands, and the validation gate. For general Yocto/BitBake recipe practices independent of this repository, use the yocto-best-practices skill instead.'
+description: 'Use when working in the Arches-OS repository or the soccentric-arches meta-arches layer: kas board/repo configuration, the Makefile build workflow, SWUpdate packaging, or the layers/ tree. Covers repository boundary rules, the meta-arches do and do not list, kas/build commands, and the validation gate. For general Yocto/BitBake recipe practices independent of this repository, use the yocto-best-practices skill instead.'
 argument-hint: 'Describe the Arches-OS, kas, meta-arches, or SWUpdate task to review or implement.'
 ---
 
@@ -10,7 +10,7 @@ Use this skill for any change inside the Arches-OS repository: kas configuration
 
 ## Repository Boundary
 
-Arches-OS is a kas-managed Yocto build for NVIDIA Jetson boards. Keep project customization in meta/meta-arches, the checked-out SiliconCentric meta-arches layer. Treat upstream layers (poky, meta-openembedded, meta-tegra, meta-swupdate) as immutable dependencies. For the full directory layout and the (implicit, non-code) coupling to Client/Configuration/HAL, see `.claude/project_specs.md`.
+Arches-OS is a kas-managed Yocto build for NVIDIA Jetson boards. Keep project customization in meta/meta-arches, the checked-out soccentric-arches meta-arches layer. Treat upstream layers (poky, meta-openembedded, meta-tegra, meta-swupdate) as immutable dependencies. For the full directory layout and the (implicit, non-code) coupling to Client/Configuration/HAL, see `.claude/project_specs.md`.
 
 ### Do
 
