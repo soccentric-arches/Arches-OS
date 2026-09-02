@@ -14,7 +14,7 @@ layer checkouts via `./kas-container checkout kas/boards/<board>.yaml`.
 | meta-swupdate | https://github.com/sbabic/meta-swupdate | scarthgap | `a329ea9f9ef4eeb316f2da2dba4a9c1bcb106899` | SWUpdate OTA framework |
 | meta-rust-bin | https://github.com/rust-embedded/meta-rust-bin | master | `54721fa1c7a4edaba7fb63cdbcaf0c6253c5fa3a` | prebuilt Rust 1.85 toolchain (webconfigd MSRV) |
 | meta-virtualization | https://git.yoctoproject.org/meta-virtualization | scarthgap | `422dcd49756aef2c780146d54ccb39477759267a` | container runtime support |
-| meta-arches | git@github.com:soccentric-arches/meta-arches.git | orin | `ecb913231dbada98cadef66f487248f729f8aeb0` | project layer — version-locked to this branch |
+| meta-arches | git@github.com:soccentric-arches/meta-arches.git | orin | `a8efd070b3fdf4d0a2835c20732dd9e0f7df36fa` | project layer — version-locked to this branch |
 
 Container base image (build tooling, not a Yocto layer):
 

@@ -1,5 +1,20 @@
 # Orin branch — verification record
 
+## Build validation (2026-09-02)
+
+- Full build of `arches-image` for `jetson-agx-orin-devkit` executed in the
+  pinned container: **8,732 tasks, all succeeded** — artifacts produced
+  (`.rootfs.ext4`, `.rootfs.wic.bz2` + `.bmap`, `.rootfs.tegraflash.tar.gz`,
+  manifest, SPDX).
+- First pass exposed 9 QA errors (nonzero bitbake exit despite all tasks
+  succeeding): allarch packagegroups depending on dynamically-renamed package
+  names (paho-mqtt-cpp, protobuf family, libgpiod). Root cause:
+  packagegroup.bbclass snapshots PACKAGE_ARCH at parse time; the recipes set
+  MACHINE_ARCH after the inherit. Fixed in meta-arches@orin `a8efd07…` by
+  setting PACKAGE_ARCH before the inherit; rebuild clean.
+- Benign parse-time advisory (pre-existing, carried forward):
+  meta-virtualization included without `virtualization` in DISTRO_FEATURES.
+
 ## Verified against sources
 
 - All seven pins in `kas/repos/*.yaml` are full 40-char commit SHAs, read from
