@@ -1,0 +1,58 @@
+# Xavier Branch Task List
+
+- Confirm the selected Yocto/OE-Core release.
+- Confirm the selected `meta-tegra` Xavier revision.
+- Record the full immutable revision in the branch manifest.
+- Confirm the terminal L4T R35.x release.
+- Confirm the matching JetPack 5.1.x release.
+- Confirm the matching host-toolchain requirements from the selected BSP.
+- List all AGX Xavier machines exposed by the selected BSP.
+- Verify AGX Xavier 8GB mapping.
+- Verify AGX Xavier 16GB mapping.
+- Verify AGX Xavier 32GB mapping.
+- Verify AGX Xavier 64GB mapping.
+- Verify the AGX Xavier carrier and developer kit.
+- Verify the AGX Xavier Industrial machine mapping.
+- List all Xavier NX SD machines exposed by the selected BSP.
+- Verify the Xavier NX SD module part number.
+- Verify the Xavier NX SD carrier mapping.
+- Verify the Xavier NX eMMC machine mapping.
+- Verify the Xavier NX eMMC carrier mapping.
+- Remove machines outside the Xavier generation from branch configuration.
+- Add only verified Xavier machine aliases under `meta-arches`.
+- Add a default flagship Xavier developer-kit board configuration.
+- Add one kas board entry for each verified Xavier machine.
+- Add the Xavier layer revision manifest.
+- Pin every Xavier upstream repository to a full commit.
+- Pin the matching `meta-arches` Xavier commit.
+- Add Xavier-specific `local.conf.sample`.
+- Add Xavier-specific `bblayers.conf.sample`.
+- Add the Xavier Dockerfile.
+- Pin the Xavier Docker base image.
+- Add the Xavier container entry script.
+- Mount the Xavier downloads cache in the container.
+- Mount the Xavier sstate cache in the container.
+- Port only Xavier-compatible Arches image recipes.
+- Review Xavier CUDA and TensorRT compatibility.
+- Review every Xavier kernel configuration fragment.
+- Review every Xavier device-tree asset.
+- Review every Xavier bootloader configuration.
+- Review every Xavier partition layout.
+- Verify the initrd flash workflow.
+- Document the AGX Xavier flash command.
+- Document the AGX Xavier Industrial flash command.
+- Document the Xavier NX SD flash command.
+- Document the Xavier NX eMMC flash command.
+- Add `VERIFY.md` for any unresolved Xavier mapping.
+- Add `MIGRATION.md` describing the split from the shared tree.
+- Parse all Xavier kas YAML files.
+- Run Xavier metadata lint checks.
+- Run Xavier unit tests.
+- Run a Xavier BitBake parse.
+- Build the default Xavier image.
+- Build every verified Xavier board image.
+- Verify generated Xavier image artifacts.
+- Verify the Xavier flash package contents.
+- Check that no TX, Orin, or Thor machine references remain.
+- Check that no host OS requirement is documented outside Docker metadata.
+- Check that the Xavier upstream layers are clean.
