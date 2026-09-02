@@ -1,0 +1,8 @@
+CONF_VERSION = "2"
+MACHINE ??= "jetson-tx1-devkit"
+DISTRO ?= "poky"
+IMAGE_FSTYPES ?= "ext4 tegraflash"
+DL_DIR ?= "${TOPDIR}/../cache/downloads"
+SSTATE_DIR ?= "${TOPDIR}/../cache/sstate-cache"
+LICENSE_FLAGS_ACCEPTED:append = " commercial"
+require ${TOPDIR}/../meta/meta-arches/arches.inc

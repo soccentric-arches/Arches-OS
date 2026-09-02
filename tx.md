@@ -5,7 +5,7 @@
 - [x] Record the full immutable revision in the branch manifest.
 - [x] Confirm the terminal L4T R32.7.x release: Jetson Linux `R32.7.6`.
 - [x] Confirm the matching JetPack 4.6.x release.
-- [ ] Confirm the supported host-toolchain requirements from the selected BSP.
+- [x] Confirm the supported host-toolchain requirements from the selected BSP: R32 CUDA uses the upstream GCC 8 compatibility path; final recipe use remains build-verified below.
 - [x] List every TX1 machine exposed by the selected BSP: `jetson-tx1-devkit`.
 - [x] Verify the TX1 module part number: P2180.
 - [x] Verify the TX1 carrier and developer-kit mapping: P2597.
@@ -18,39 +18,39 @@
 - [x] List every Nano SD machine exposed by the selected BSP: `jetson-nano-devkit` and `jetson-nano-2gb-devkit`.
 - [x] Verify the Nano eMMC machine mapping: P3448 SKU 0002 on P3449.
 - [x] Verify the Nano 2GB machine mapping: P3448 SKU 0003 on P3542.
-- Remove machines outside the TX generation from branch configuration.
-- Add only verified TX machine aliases under `meta-arches`.
-- Add a default flagship TX developer-kit board configuration.
-- Add one kas board entry for each verified TX machine.
-- Add the TX layer revision manifest.
-- Pin every TX upstream repository to a full commit.
-- Pin the matching `meta-arches` TX commit.
-- Add TX-specific `local.conf.sample`.
-- Add TX-specific `bblayers.conf.sample`.
-- Add the TX Dockerfile.
-- Pin the TX Docker base image.
-- Add the TX container entry script.
-- Mount the TX downloads cache in the container.
-- Mount the TX sstate cache in the container.
-- Port only compatible Arches image recipes to the TX BSP.
-- Review every TX kernel configuration fragment.
-- Review every TX device-tree asset.
-- Review every TX bootloader configuration.
-- Review the TX partition layout.
-- Verify the legacy TX flash workflow.
-- Document the TX1 flash command.
-- Document the TX2 flash command.
-- Document the TX2i flash command.
-- Document the TX2 NX flash command.
-- Document the Nano SD flash command.
-- Document the Nano eMMC flash command.
-- Document the Nano 2GB flash command.
-- Add `VERIFY.md` for any unresolved TX mapping.
-- Add `MIGRATION.md` describing the split from the shared tree.
-- Parse all TX kas YAML files.
-- Run TX metadata lint checks.
-- Run TX unit tests.
-- Run a TX BitBake parse.
+- [x] Remove machines outside the TX generation from branch configuration.
+- [x] Add only verified TX machine names under `meta-arches`; upstream names are used directly and the TX2 NX canonical name is retained.
+- [x] Add a default flagship TX developer-kit board configuration.
+- [x] Add one kas board entry for each verified TX machine.
+- [x] Add the TX layer revision manifest.
+- [x] Pin every TX upstream repository to a full commit, except the intentionally cross-release `meta-rust-bin` master pin which is documented and full-length.
+- [x] Pin the matching `meta-arches` TX commit.
+- [x] Add TX-specific `local.conf.sample`.
+- [x] Add TX-specific `bblayers.conf.sample`.
+- [x] Add the TX Dockerfile.
+- [x] Pin the TX Docker base image by digest.
+- [x] Add the TX container entry script.
+- [x] Mount the TX downloads cache in the container workflow.
+- [x] Mount the TX sstate cache in the container workflow.
+- [ ] Port only compatible Arches image recipes to the TX BSP; the clean parse is complete, but image package compatibility still needs a rootfs build.
+- [x] Review every TX kernel configuration fragment.
+- [x] Review every TX device-tree asset against the pinned upstream machine selections.
+- [x] Review every TX bootloader configuration against the pinned R32 tegraflash flow.
+- [x] Review the TX partition layout through the upstream machine-specific XML selections.
+- [ ] Verify the legacy TX flash workflow on generated packages and hardware.
+- [x] Document the TX1 flash command.
+- [x] Document the TX2 flash command.
+- [x] Document the TX2i flash command.
+- [x] Document the TX2 NX flash command.
+- [x] Document the Nano SD flash command.
+- [x] Document the Nano eMMC flash command.
+- [x] Document the Nano 2GB flash command.
+- [x] Add `VERIFY.md` for unresolved build and hardware claims.
+- [x] Add `MIGRATION.md` describing the split from the shared tree.
+- [x] Parse all TX kas YAML files.
+- [x] Run TX metadata lint checks.
+- [x] Run TX unit tests.
+- [x] Run a TX BitBake parse for `jetson-tx1-devkit` with zero errors.
 - Build the default TX image.
 - Build every verified TX board image.
 - Verify generated TX image artifacts.

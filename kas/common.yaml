@@ -1,12 +1,12 @@
 header:
   version: 14
   includes:
-    - kas/repos/poky.yaml
-    - kas/repos/meta-openembedded.yaml
-    - kas/repos/meta-tegra.yaml
-    - kas/repos/meta-swupdate.yaml
-    - kas/repos/meta-rust-bin.yaml
-    - kas/repos/meta-arches.yaml
+    - ../repos/poky.yaml
+    - ../repos/meta-openembedded.yaml
+    - ../repos/meta-tegra.yaml
+    - ../repos/meta-swupdate.yaml
+    - ../repos/meta-rust-bin.yaml
+    - ../repos/meta-arches.yaml
 
 distro: poky
 target: arches-image
