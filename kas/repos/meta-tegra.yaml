@@ -5,7 +5,7 @@ repos:
   meta-tegra:
     url: https://github.com/OE4T/meta-tegra
     branch: scarthgap
-    commit: d2613418
+    commit: d2613418be82dd95733824a0839c185ec0e02f2d
     path: layers/meta-tegra
     layers:
       .:

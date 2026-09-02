@@ -1,6 +1,9 @@
 # Arches — Multi-Generation Jetson Yocto Branching
 ## Requirements & Implementation Prompt
 
+
+NOTE: use usbagets and git worktree whre possibel to spped up the work 
+
 **Audience:** LLM coding agent with read/write access to the Arches Yocto build repository.
 **Deliverable:** Four mutually incompatible, self-contained build branches — `tx`, `xavier`, `orin`, `thor` — each producing a clean, flashable image for every SoM and developer kit in its generation.
 
