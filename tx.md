@@ -1,0 +1,60 @@
+# TX Branch Task List
+
+- Confirm the selected Yocto/OE-Core release.
+- Confirm the selected `meta-tegra` TX revision.
+- Record the full immutable revision in the branch manifest.
+- Confirm the terminal L4T R32.7.x release.
+- Confirm the matching JetPack 4.6.x release.
+- Confirm the supported host-toolchain requirements from the selected BSP.
+- List every TX1 machine exposed by the selected BSP.
+- Verify the TX1 module part number.
+- Verify the TX1 carrier and developer-kit mapping.
+- List every TX2 machine exposed by the selected BSP.
+- Verify the TX2 module part number.
+- Verify the TX2 carrier and developer-kit mapping.
+- Verify the TX2 4GB machine mapping.
+- Verify the TX2i machine mapping.
+- Verify the TX2 NX machine mapping.
+- List every Nano SD machine exposed by the selected BSP.
+- Verify the Nano eMMC machine mapping.
+- Verify the Nano 2GB machine mapping.
+- Remove machines outside the TX generation from branch configuration.
+- Add only verified TX machine aliases under `meta-arches`.
+- Add a default flagship TX developer-kit board configuration.
+- Add one kas board entry for each verified TX machine.
+- Add the TX layer revision manifest.
+- Pin every TX upstream repository to a full commit.
+- Pin the matching `meta-arches` TX commit.
+- Add TX-specific `local.conf.sample`.
+- Add TX-specific `bblayers.conf.sample`.
+- Add the TX Dockerfile.
+- Pin the TX Docker base image.
+- Add the TX container entry script.
+- Mount the TX downloads cache in the container.
+- Mount the TX sstate cache in the container.
+- Port only compatible Arches image recipes to the TX BSP.
+- Review every TX kernel configuration fragment.
+- Review every TX device-tree asset.
+- Review every TX bootloader configuration.
+- Review the TX partition layout.
+- Verify the legacy TX flash workflow.
+- Document the TX1 flash command.
+- Document the TX2 flash command.
+- Document the TX2i flash command.
+- Document the TX2 NX flash command.
+- Document the Nano SD flash command.
+- Document the Nano eMMC flash command.
+- Document the Nano 2GB flash command.
+- Add `VERIFY.md` for any unresolved TX mapping.
+- Add `MIGRATION.md` describing the split from the shared tree.
+- Parse all TX kas YAML files.
+- Run TX metadata lint checks.
+- Run TX unit tests.
+- Run a TX BitBake parse.
+- Build the default TX image.
+- Build every verified TX board image.
+- Verify generated TX image artifacts.
+- Verify the TX flash package contents.
+- Check that no Xavier, Orin, or Thor machine references remain.
+- Check that no host OS requirement is documented outside Docker metadata.
+- Check that the TX upstream layers are clean.
