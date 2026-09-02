@@ -1,0 +1,54 @@
+# Thor Branch Task List
+
+- Select the Thor upstream release line.
+- Resolve the R38.2.x versus R39.x decision.
+- Confirm the selected Yocto/OE-Core release.
+- Confirm the selected Thor `meta-tegra` revision.
+- Record the full immutable revision in the branch manifest.
+- Confirm the selected L4T release.
+- Confirm the matching JetPack 7.x release.
+- Confirm the matching host-toolchain requirements from the selected BSP.
+- List every Thor machine exposed by the selected BSP.
+- Verify the AGX Thor T5000 module part number.
+- Verify the AGX Thor T4000 module part number.
+- Verify the P4071 carrier mapping.
+- Verify the AGX Thor developer-kit mapping.
+- Remove Orin machines from the Thor branch.
+- Remove any other non-Thor machines from branch configuration.
+- Add only verified Thor machine aliases under `meta-arches`.
+- Add a default AGX Thor developer-kit board configuration.
+- Add one kas board entry for each verified Thor machine.
+- Add the Thor layer revision manifest.
+- Pin every Thor upstream repository to a full commit.
+- Pin the matching `meta-arches` Thor commit.
+- Add Thor-specific `local.conf.sample`.
+- Add Thor-specific `bblayers.conf.sample`.
+- Add the Thor Dockerfile.
+- Pin the Thor Docker base image.
+- Add the Thor container entry script.
+- Mount the Thor downloads cache in the container.
+- Mount the Thor sstate cache in the container.
+- Identify Thor CUDA package names.
+- Identify Thor TensorRT package names.
+- Identify Thor camera and codec package names.
+- Review Thor BSP licensing requirements.
+- Review every Thor kernel configuration fragment.
+- Review every Thor device-tree asset.
+- Review the Thor bootloader configuration.
+- Review the Thor partition layout.
+- Verify the unified Thor flash workflow.
+- Document the AGX Thor T5000 flash command.
+- Document the AGX Thor T4000 flash command.
+- Add `VERIFY.md` for every unresolved Thor mapping.
+- Add `MIGRATION.md` describing the split from the shared tree.
+- Parse all Thor kas YAML files.
+- Run Thor metadata lint checks.
+- Run Thor unit tests.
+- Run a Thor BitBake parse.
+- Build the default Thor image.
+- Build every verified Thor board image.
+- Verify generated Thor image artifacts.
+- Verify the Thor flash package contents.
+- Check that no TX, Xavier, or Orin machine references remain.
+- Check that no host OS requirement is documented outside Docker metadata.
+- Check that the Thor upstream layers are clean.
