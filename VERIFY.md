@@ -9,14 +9,19 @@ Verified for the TX branch:
 - Jetson Linux R32.7.6 and JetPack 4.6.6 release metadata.
 - Eight machine names and their module/carrier mappings in `tx.md`.
 - Eight kas board files and their corrected relative includes.
-- The TX layer commit `fc1106e7d0c53bd4e71e23e3c840455413437862`.
+- The TX layer commit `b21894b76d86e64ba2133cdd637580eae303b559`.
 - The TX container base digest in `docker/tx/Dockerfile`.
 
-Still requiring a build or target:
+Verified by the TX1 build:
 
-- BitBake parse after kas checks out the TX layer set.
-- CUDA 10.2 and GCC 8 recipe integration.
-- Generated tegraflash package contents.
+- Clean kas checkout resolved every pinned repository.
+- BitBake parsed all recipes with zero parse errors.
+- The image completed all 5,777 scheduled tasks.
+- `arches-image` rootfs, image QA, ext4, and tegraflash tasks succeeded.
+- A TX1 `.rootfs.ext4` and `.tegraflash.tar.gz` package were generated.
+
+Still requiring a target:
+
 - Physical recovery-mode flashing and boot for every board.
 - Target-side connectivity, hardware discovery, and OTA behavior.
 - The existing SWUpdate scripts, which remain carried forward and are not

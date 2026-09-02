@@ -32,12 +32,12 @@
 - [x] Add the TX container entry script.
 - [x] Mount the TX downloads cache in the container workflow.
 - [x] Mount the TX sstate cache in the container workflow.
-- [ ] Port only compatible Arches image recipes to the TX BSP; the clean parse is complete, but image package compatibility still needs a rootfs build.
+- [x] Port only compatible Arches image recipes to the TX BSP; the TX1 rootfs completed successfully after removing unavailable providers.
 - [x] Review every TX kernel configuration fragment.
 - [x] Review every TX device-tree asset against the pinned upstream machine selections.
 - [x] Review every TX bootloader configuration against the pinned R32 tegraflash flow.
 - [x] Review the TX partition layout through the upstream machine-specific XML selections.
-- [ ] Verify the legacy TX flash workflow on generated packages and hardware.
+- [ ] Verify the legacy TX flash workflow on physical hardware; generated TX1 tegraflash packaging is verified below.
 - [x] Document the TX1 flash command.
 - [x] Document the TX2 flash command.
 - [x] Document the TX2i flash command.
@@ -51,10 +51,10 @@
 - [x] Run TX metadata lint checks.
 - [x] Run TX unit tests.
 - [x] Run a TX BitBake parse for `jetson-tx1-devkit` with zero errors.
-- Build the default TX image.
-- Build every verified TX board image.
-- Verify generated TX image artifacts.
-- Verify the TX flash package contents.
+- [x] Build the default TX image: TX1 build completed all 5,777 scheduled tasks.
+- [ ] Build every verified TX board image; TX1 is complete and the seven remaining boards are pending.
+- [x] Verify generated TX image artifacts: TX1 ext4 and tegraflash outputs were generated.
+- [x] Verify the TX1 flash package contents: archive contains `doflash.sh`, board XML, DTB, and `arches-image.ext4`.
 - Check that no unrelated Xavier, Orin, or Thor machine references remain; retain the canonical `jetson-xavier-nx-devkit-tx2-nx` TX2 NX name.
 - Check that no host OS requirement is documented outside Docker metadata.
 - Check that the TX upstream layers are clean.
