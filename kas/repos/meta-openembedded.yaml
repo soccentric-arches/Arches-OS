@@ -5,7 +5,7 @@ repos:
   meta-openembedded:
     url: https://github.com/openembedded/meta-openembedded
     branch: scarthgap
-    commit: ae7dfb1224
+    commit: ae7dfb12245c7f9b9a353499e2688015bd4e6413
     path: layers/meta-openembedded
     layers:
       meta-oe:
