@@ -1,6 +1,6 @@
 header:
   version: 14
   includes:
-    - kas/common.yaml
+    - ../common.yaml
 
 machine: jetson-nano-devkit-emmc
