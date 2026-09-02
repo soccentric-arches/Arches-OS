@@ -4,7 +4,8 @@ header:
 repos:
   meta-arches:
     url: git@github.com:soccentric-arches/meta-arches.git
-    branch: develop
+    branch: xavier
+    commit: 93adab339d80d7edf40dec1482d1319d1678404c
     path: meta/meta-arches
     layers:
       .:

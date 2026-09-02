@@ -1,6 +1,8 @@
 IMAGE_NAME  ?= arches-kas
 IMAGE_TAG   ?= latest
-KAS_VERSION ?= 4.5
+# Digest pin — keep in sync with the FROM line in the Dockerfile.
+# kas 4.5 multi-arch index digest.
+KAS_DIGEST  ?= sha256:1bf421652ed769134ec401add491ae6bc6f7b7c6f26c8b1fe12d15e318355563
 
 .PHONY: all build clean
 
@@ -9,8 +11,9 @@ all: build
 ## Build the KAS Yocto build container
 build:
 	docker build \
-		--build-arg KAS_VERSION=$(KAS_VERSION) \
-		--label "org.yocto.kas.version=$(KAS_VERSION)" \
+		--build-arg KAS_DIGEST=$(KAS_DIGEST) \
+		--label "org.yocto.kas.version=4.5" \
+		--label "org.opencontainers.image.base.digest=$(KAS_DIGEST)" \
 		-t $(IMAGE_NAME):$(IMAGE_TAG) \
 		.
 

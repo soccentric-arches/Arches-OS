@@ -4,8 +4,8 @@ header:
 repos:
   meta-openembedded:
     url: https://github.com/openembedded/meta-openembedded
-    branch: scarthgap
-    commit: ae7dfb1224
+    branch: kirkstone
+    commit: ce8539c941f6fcbecaca4d16640ac105c0595589
     path: layers/meta-openembedded
     layers:
       meta-oe:

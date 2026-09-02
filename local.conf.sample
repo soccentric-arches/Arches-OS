@@ -1,0 +1,58 @@
+# Arches-OS — Xavier generation local.conf template.
+#
+# Works unedited: builds the default image for the flagship Xavier dev kit.
+# This file mirrors kas/common.yaml plus the flagship board defaults. The
+# supported day-to-day path is `make build <board>` (kas); this template
+# exists for direct bitbake use (see README.md).
+
+MACHINE ??= "jetson-agx-xavier-devkit"
+DISTRO ?= "poky"
+
+# Init manager
+INIT_MANAGER = "systemd"
+
+# Xavier boards use the tegraflash image flow (JetPack 5 / L4T R35.6.4)
+IMAGE_FSTYPES = "ext4 tegraflash"
+
+# Shared caches — inside the build dir, matching kas/common.yaml
+DL_DIR     ?= "${TOPDIR}/../cache/downloads"
+SSTATE_DIR ?= "${TOPDIR}/../cache/sstate-cache"
+
+# SWUpdate: enable built-in Mongoose web server and progress IPC
+PACKAGECONFIG:append:pn-swupdate = " webserver"
+
+# Required by Poky sanity checks (must match LOCALCONF_VERSION in poky)
+CONF_VERSION = "2"
+
+# Swupdate specific variables
+SWUPDATE_INIT = "systemd"
+
+# Shared product capabilities for every board image and SDK.
+ARCHES_MIDDLEWARE = "1"
+ARCHES_CLOUD = "1"
+ARCHES_DEBUG = "1"
+ARCHES_SDK_SUPPORT = "1"
+ARCHES_SECURE_BOOT ?= "0"
+
+# Jetson hardware enablement — AI/GPU compute, camera/video/codec,
+# power/thermal, and container/GPU-passthrough stacks.
+ARCHES_AI_COMPUTE = "1"
+ARCHES_CAMERA = "1"
+ARCHES_POWER = "1"
+ARCHES_CONTAINERS = "1"
+
+# Board and release configurations may override these hooks without
+# patching upstream layers.
+ARCHES_EXTLINUX_APPEND ?= ""
+ARCHES_KERNEL_CONFIG_FRAGMENTS ?= ""
+
+# Central hand-editable kernel / device-tree / bootloader feature config.
+require ${TOPDIR}/../meta/meta-arches/arches.inc
+
+# webconfigd (Arches-Configuration) has MSRV 1.85, past the rust-native
+# poky kirkstone ships; meta-rust-bin provides the prebuilt toolchain.
+PREFERRED_VERSION:rust-bin-cross-aarch64 = "1.85.1"
+PREFERRED_VERSION:cargo-bin-cross-aarch64 = "1.85.1"
+
+# Accept NVIDIA proprietary licence for BSP components
+LICENSE_FLAGS_ACCEPTED:append = " commercial"
