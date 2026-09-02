@@ -1,12 +1,12 @@
 header:
   version: 14
   includes:
-    - ../repos/poky.yaml
-    - ../repos/meta-openembedded.yaml
-    - ../repos/meta-tegra.yaml
-    - ../repos/meta-swupdate.yaml
-    - ../repos/meta-rust-bin.yaml
-    - ../repos/meta-arches.yaml
+    - kas/repos/poky.yaml
+    - kas/repos/meta-openembedded.yaml
+    - kas/repos/meta-tegra.yaml
+    - kas/repos/meta-swupdate.yaml
+    - kas/repos/meta-rust-bin.yaml
+    - kas/repos/meta-arches.yaml
 
 distro: poky
 target: arches-image
@@ -55,7 +55,7 @@ local_conf_header:
     require arches.inc
 
     # webconfigd (Arches-Configuration) has MSRV 1.85, well past the
-    # rust-native 1.75.0 poky/scarthgap ships. meta-rust-bin provides a
+    # rust-native that poky kirkstone ships. meta-rust-bin provides a
     # prebuilt, opt-in toolchain (webconfigd.bb inherits cargo_bin instead
     # of cargo) without touching poky's own rust-native/cargo-native, so
     # every other cargo-based recipe in this build is unaffected.

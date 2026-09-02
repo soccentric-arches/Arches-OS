@@ -32,10 +32,10 @@ ARCHES_SECURE_BOOT ?= 0
 
 # --- Positional board argument -----------------------------------------------
 # The board name is typed directly after the target — no BOARD= needed:
-#   make image jetson-orin-nano
-#   make sdk   jetson-orin-nano
-#   make esdk  jetson-orin-nano
-#   make shell jetson-orin-nano
+#   make image jetson-tx1-devkit
+#   make sdk   jetson-tx1-devkit
+#   make esdk  jetson-tx1-devkit
+#   make shell jetson-tx1-devkit
 # This block MUST appear before the BOARD default and KAS_CONFIG / MACHINE
 # definitions so those variables are derived from the correct board name.
 _BOARD_TARGETS := image build rebuild-image sdk esdk sdk-image esdk-image shell swu flash
@@ -54,21 +54,17 @@ endif
 
 # --- Board -------------------------------------------------------------------
 # Select target board — must match a file in kas/boards/<BOARD>.yaml
-# SD card boards:
-#   jetson-orin-nano             Jetson Orin Nano devkit (SD card, default)
-# eMMC boards (AGX Orin family):
-#   jetson-agx-orin-devkit       Jetson AGX Orin devkit (P3701-0000)
-#   jetson-agx-orin-devkit-industrial  Jetson AGX Orin Industrial 64GB (P3701-0008)
-#   p3737-0000-p3701-0004        Jetson AGX Orin 32GB (P3701-0004 in P3737)
-#   p3737-0000-p3701-0005        Jetson AGX Orin 64GB (P3701-0005 in P3737)
-# NVMe boards:
-#   jetson-orin-nano-devkit-nvme Jetson Orin Nano devkit (NVMe)
-#   p3509-a02-p3767-0000         Jetson Orin NX 16GB in P3509 carrier
-#   p3768-0000-p3767-0000        Jetson Orin NX 16GB (P3767-0000 in P3768)
-#   p3768-0000-p3767-0001        Jetson Orin NX 8GB  (P3767-0001 in P3768)
-#   p3768-0000-p3767-0003        Jetson Orin Nano 8GB (P3767-0003 in P3768)
-#   p3768-0000-p3767-0004        Jetson Orin Nano 4GB (P3767-0004 in P3768)
-BOARD            ?= jetson-agx-orin-devkit
+# Dev kit boards (legacy tegraflash output):
+#   jetson-tx1-devkit            Jetson TX1 dev kit (P2180 in P2597)
+#   jetson-tx2-devkit            Jetson TX2 dev kit (P3310 in P2771)
+#   jetson-tx2-devkit-4gb        Jetson TX2 4GB (P3489-0888 in P2771)
+#   jetson-tx2-devkit-tx2i       Jetson TX2i (P3489 in P2771)
+#   jetson-xavier-nx-devkit-tx2-nx  Jetson TX2 NX (P3636; upstream machine name)
+# Nano family:
+#   jetson-nano-devkit          Jetson Nano dev kit (SD image via dosdcard.sh)
+#   jetson-nano-devkit-emmc     Jetson Nano eMMC module (P3448-0002)
+#   jetson-nano-2gb-devkit      Jetson Nano 2GB dev kit (SD image via dosdcard.sh)
+BOARD            ?= jetson-tx1-devkit
 KAS_CONFIG       := kas/boards/$(BOARD).yaml
 
 # Derive MACHINE automatically from the kas yaml
@@ -149,7 +145,7 @@ kas-image: ## Build/rebuild KAS build container  (docker/yocto/)
 	$(MAKE) -C docker/yocto \
 	    IMAGE_NAME=$(_KAS_IMAGE_NAME) \
 	    IMAGE_TAG=$(_KAS_IMAGE_TAG) \
-	    KAS_VERSION=$(KAS_VERSION)
+	    KAS_DIGEST=sha256:1bf421652ed769134ec401add491ae6bc6f7b7c6f26c8b1fe12d15e318355563
 
 ## Build the KAS image only when it is absent (used internally by build/shell/sdk/esdk)
 ensure-image: ## Build the KAS image only when absent
@@ -157,8 +153,8 @@ ensure-image: ## Build the KAS image only when absent
 	    || { echo "KAS image $(KAS_IMAGE) not found — building ..."; \
 	         $(MAKE) kas-image; }
 
-## Build the Yocto SD card image for BOARD — alias for build
-## Usage: make image jetson-orin-nano
+## Build the Yocto image for BOARD — alias for build
+## Usage: make image jetson-tx1-devkit
 image: build ## Build the selected image (alias for build)
 
 ## Full chain: Yocto SDK build → stage installer → docker build → deploy
@@ -278,7 +274,7 @@ rebuild-image: ensure-image kas-container-script check-board ## Clear image ssta
 
 ## Build image+sdk+esdk for every board, continuing past failures, and emit
 ## a pass/fail report table under build/reports/.
-## Usage: make build-all   or   make build-all BUILD_ALL_ARGS="-b jetson-orin-nano -t build"
+## Usage: make build-all   or   make build-all BUILD_ALL_ARGS="-b jetson-tx1-devkit -t build"
 build-all: ensure-image kas-container-script ## Build image+sdk+esdk for every board; pass/fail report
 	./scripts/build-all.sh $(BUILD_ALL_ARGS)
 
@@ -349,22 +345,14 @@ swu: check-board ## Build and deploy an OTA package
 	@$(MAKE) --no-print-directory deploy-swu DEPLOY_TS=$(DEPLOY_TS) SWU_VERSION=$(SWU_VERSION)
 
 
-## Flash to SD card.  Usage: make flash jetson-orin-nano DEVICE=/dev/sdX
-flash: check-board ## Flash a validated WIC image to DEVICE
-ifndef DEVICE
-	$(error DEVICE is not set — example: make flash DEVICE=/dev/sdb)
-endif
-	@test -b "$(DEVICE)" || \
-	    { echo "ERROR: '$(DEVICE)' is not a block device."; exit 1; }
-	$(eval WIC := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
-	    -maxdepth 1 -name "*.wic.bz2" 2>/dev/null | sort -V | tail -1))
-	@test -n "$(WIC)" || \
-	    { echo "ERROR: no .wic.bz2 found in $(BUILD_DIR)/tmp/deploy/images/$(MACHINE)"; exit 1; }
-	$(eval WIC_BMAP := $(WIC:.bz2=.bmap))
-	@test -f "$(WIC_BMAP)" || \
-	    { echo "ERROR: no .bmap file found at $(WIC_BMAP)"; exit 1; }
-	@echo "Flashing $(WIC) → $(DEVICE)"
-	bmaptool copy --bmap "$(WIC_BMAP)" "$(WIC)" "$(DEVICE)"
+## Flash — TX generation uses the legacy tegraflash flow, not WIC writes.
+## See TX_FLASH.md for the per-machine procedure (doflash.sh / dosdcard.sh).
+flash: check-board ## Print the TX flash procedure (see TX_FLASH.md)
+	@echo "TX boards do not flash via WIC/bmaptool."
+	@echo "Build the board image, then follow TX_FLASH.md:"
+	@echo "  make build $(BOARD)"
+	@echo "  tar -xzf build/tmp/deploy/images/$(MACHINE)/*.tegraflash.tar.gz -C /tmp/tegraflash-$(MACHINE)"
+	@echo "  cd /tmp/tegraflash-$(MACHINE) && ./doflash.sh   # or ./dosdcard.sh for Nano SD/2GB"
 
 # -----------------------------------------------------------------------------
 # Artifact deployment (called automatically; can also be invoked manually)

@@ -7,10 +7,10 @@
 #   source ~/work/arches/arches-make-completion.bash
 #
 # Usage:
-#   make image  jetson-orin-nano        ← board as positional arg
-#   make sdk    jetson-orin-nano
-#   make esdk   jetson-orin-nano
-#   make flash  jetson-orin-nano DEVICE=/dev/sdb
+#   make image  jetson-tx1-devkit       ← board as positional arg
+#   make sdk    jetson-tx1-devkit
+#   make esdk   jetson-tx1-devkit
+#   make flash  jetson-tx1-devkit
 
 # ---------------------------------------------------------------------------
 # Internal helpers
