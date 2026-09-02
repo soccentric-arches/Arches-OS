@@ -16,7 +16,7 @@
     (declares whinlatter+wrynose compat; no whinlatter branch exists)
   - meta-rust-bin `54721fa1c7a4edaba7fb63cdbcaf0c6253c5fa3a` (declares
     whinlatter compat)
-  - meta-arches thor `095425fa836b804f0c2328022d4cdfafdaad8c92` (pushed)
+  - meta-arches thor `60df5ddf0ede70146b38045c3629a57e3115ac5a` (pushed)
 - meta-tegra master-l4t-r38.4.x @ the pin carries **L4T R38.4.0** (all
   `tegra-binaries` recipes versioned `38.4.0`).
 - Thor machines read from the pinned branch: `jetson-agx-thor-devkit`
@@ -57,6 +57,26 @@
   both R38.4.0 EDK2 recipes. Whether R38's EDK2 exhibits the same LTO/GenFw
   incompatibility was **not** verified by a build; the override is
   no-op-safe but its necessity is unconfirmed.
+
+## Build validation (2026-09-02 sweep)
+
+- Full BitBake parse (`bitbake -p`) in the pinned container: **PASS** —
+  3,401 recipes, 0 errors, 5,732 targets for `jetson-agx-thor-devkit`.
+- Fixes required by the parse (all applied and re-verified):
+  - `kas/repos/oe-core.yaml`: bitbake repo entry needs an explicit empty
+    `layers: {}` — kas's default for a repo without a layers key is the repo
+    root, which put `layers/bitbake` into BBLAYERS and failed with
+    "conf/layer.conf not found".
+  - meta-arches@thor (commit `60df5dd…`): OE-Core whinlatter removed
+    `S = ${WORKDIR}`; the four file:// recipes (arches-home-init,
+    arches-swupdate-config, arches-connectivity, expand-rootfs) now set
+    `S = "${UNPACKDIR}"`.
+  - meta-openembedded pinned to **wrynose** @ `14282a02…` (not whinlatter):
+    meta-tegra r38.4 bbappends opencv 4.13, which meta-openembedded whinlatter
+    does not carry (4.12); wrynose carries opencv_4.13.0 and declares
+    "whinlatter wrynose" compatibility — this is the pairing meta-tegra's
+    own layer declaration allows. Recorded in `PINS.md`.
+- Benign parse-time notes: none. Machine = jetson-agx-thor-devkit.
 
 ## Cannot be verified in this environment (no target hardware; no full build run)
 

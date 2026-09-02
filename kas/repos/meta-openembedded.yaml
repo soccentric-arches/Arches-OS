@@ -4,8 +4,8 @@ header:
 repos:
   meta-openembedded:
     url: https://git.openembedded.org/meta-openembedded
-    branch: whinlatter
-    commit: f52f32952cb9717949f8bc3d3ccf6c4c5a59521f
+    branch: wrynose
+    commit: 14282a02be9c74a1276a7cda7d6c89e054699a11
     path: layers/meta-openembedded
     layers:
       meta-oe:

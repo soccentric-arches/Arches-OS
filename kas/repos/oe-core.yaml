@@ -18,6 +18,10 @@ repos:
     branch: "2.18"
     commit: 0ad6c1c34a5e07a5f8dd66ab248c1e7b37b69fa9
     path: layers/bitbake
+    # BitBake is a tool checkout, not a layer — an empty layers dict keeps
+    # kas from adding the repo root to BBLAYERS (the kas default for a repo
+    # without a layers key is the repo root).
+    layers: {}
 
   meta-yocto:
     url: https://git.yoctoproject.org/meta-yocto

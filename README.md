@@ -60,7 +60,7 @@ Notes:
 | meta-tegra | master-l4t-r38.4.x | `83f51cb2b3d179f00feb1fbdf0fdb4a65151ae81` |
 | meta-swupdate | master | `5e069ecc5c5d3567186880748a3a5480f7235dde` |
 | meta-rust-bin | master | `54721fa1c7a4edaba7fb63cdbcaf0c6253c5fa3a` |
-| meta-arches | thor | `095425fa836b804f0c2328022d4cdfafdaad8c92` |
+| meta-arches | thor | `60df5ddf0ede70146b38045c3629a57e3115ac5a` |
 
 ## Build
 

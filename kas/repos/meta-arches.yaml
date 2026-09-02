@@ -5,7 +5,7 @@ repos:
   meta-arches:
     url: git@github.com:soccentric-arches/meta-arches.git
     branch: thor
-    commit: 095425fa836b804f0c2328022d4cdfafdaad8c92
+    commit: 60df5ddf0ede70146b38045c3629a57e3115ac5a
     path: meta/meta-arches
     layers:
       .:
