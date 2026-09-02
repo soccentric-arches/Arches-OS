@@ -1,21 +1,21 @@
 # TX Branch Task List
 
-- Confirm the selected Yocto/OE-Core release.
-- Confirm the selected `meta-tegra` TX revision.
-- Record the full immutable revision in the branch manifest.
-- Confirm the terminal L4T R32.7.x release.
-- Confirm the matching JetPack 4.6.x release.
-- Confirm the supported host-toolchain requirements from the selected BSP.
-- List every TX1 machine exposed by the selected BSP.
+- [x] Confirm the selected Yocto/OE-Core release: Yocto `kirkstone` at `445a6223929b9a7a62b575093659e3d9e1aba982`.
+- [x] Confirm the selected `meta-tegra` TX revision: `kirkstone-l4t-r32.7.x` at `94e3db3146dc273ec1df463426c0fcaeacc51b5f`.
+- [x] Record the full immutable revision in the branch manifest.
+- [x] Confirm the terminal L4T R32.7.x release: Jetson Linux `R32.7.6`.
+- [x] Confirm the matching JetPack 4.6.x release.
+- [ ] Confirm the supported host-toolchain requirements from the selected BSP.
+- [x] List every TX1 machine exposed by the selected BSP: `jetson-tx1-devkit`.
 - Verify the TX1 module part number.
 - Verify the TX1 carrier and developer-kit mapping.
-- List every TX2 machine exposed by the selected BSP.
+- [x] List every TX2 machine exposed by the selected BSP: `jetson-tx2-devkit`, `jetson-tx2-devkit-4gb`, and `jetson-tx2-devkit-tx2i`.
 - Verify the TX2 module part number.
 - Verify the TX2 carrier and developer-kit mapping.
 - Verify the TX2 4GB machine mapping.
 - Verify the TX2i machine mapping.
 - Verify the TX2 NX machine mapping.
-- List every Nano SD machine exposed by the selected BSP.
+- [x] List every Nano SD machine exposed by the selected BSP: `jetson-nano-devkit` and `jetson-nano-2gb-devkit`.
 - Verify the Nano eMMC machine mapping.
 - Verify the Nano 2GB machine mapping.
 - Remove machines outside the TX generation from branch configuration.
