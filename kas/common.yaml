@@ -1,12 +1,11 @@
 header:
   version: 14
   includes:
-    - kas/repos/poky.yaml
+    - kas/repos/oe-core.yaml
     - kas/repos/meta-openembedded.yaml
     - kas/repos/meta-tegra.yaml
     - kas/repos/meta-swupdate.yaml
     - kas/repos/meta-rust-bin.yaml
-    - kas/repos/meta-virtualization.yaml
     - kas/repos/meta-arches.yaml
 
 distro: poky
@@ -17,11 +16,10 @@ local_conf_header:
     # Init manager
     INIT_MANAGER = "systemd"
 
-    # SD card image output (wic for SD card, ext4 for SWUpdate OTA)
-    IMAGE_FSTYPES = "wic.bz2 wic.bmap ext4"
-
-    # All supported boards use the UEFI/extlinux boot partition source.
-    IMAGE_BOOT_FILES = "Image initrd extlinux/extlinux.conf"
+    # Thor boards use the tegraflash-tar flash-package flow (JetPack 7 /
+    # L4T R38.4.0). The rootfs travels inside the flash package as
+    # ext4.simg; the plain ext4 output feeds the SWUpdate OTA flow.
+    IMAGE_FSTYPES = "ext4 tegraflash-tar"
 
     # Shared caches (bind-mounted by Docker)
     DL_DIR     ?= "${TOPDIR}/../cache/downloads"
@@ -30,7 +28,7 @@ local_conf_header:
     # SWUpdate: enable built-in Mongoose web server and progress IPC
     PACKAGECONFIG:append:pn-swupdate = " webserver"
 
-    # Required by Poky sanity checks (must match LOCALCONF_VERSION in poky)
+    # Required by Poky sanity checks
     CONF_VERSION = "2"
 
     # Swupdate specific variables
@@ -62,13 +60,12 @@ local_conf_header:
     require arches.inc
 
     # webconfigd (Arches-Configuration) has MSRV 1.85, well past the
-    # rust-native 1.75.0 poky/scarthgap ships. meta-rust-bin provides a
+    # rust-native that OE-Core whinlatter ships. meta-rust-bin provides a
     # prebuilt, opt-in toolchain (webconfigd.bb inherits cargo_bin instead
-    # of cargo) without touching poky's own rust-native/cargo-native, so
+    # of cargo) without touching the core rust-native/cargo-native, so
     # every other cargo-based recipe in this build is unaffected.
     PREFERRED_VERSION:rust-bin-cross-aarch64 = "1.85.1"
     PREFERRED_VERSION:cargo-bin-cross-aarch64 = "1.85.1"
 
-    # Jetson Orin Nano: boot via UEFI + extlinux (no U-Boot needed)
     # Accept NVIDIA proprietary licence for BSP components
     LICENSE_FLAGS_ACCEPTED:append = " commercial"

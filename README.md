@@ -1,44 +1,97 @@
-# Arches-OS
+# Arches-OS — Thor generation branch
 
-## Project Summary
+Arches-OS build tree for the **NVIDIA Blackwell Thor generation** only:
+Jetson AGX Thor T5000 and T4000, on **L4T R38.4.0 / JetPack 7.x**, OE-Core
+**whinlatter**, `meta-tegra` **master-l4t-r38.4.x**.
 
-Arches-OS is the Yocto/Kas-based operating-system integration repository for Arches targets.
+This branch is deliberately incompatible with the `tx`, `xavier`, and `orin`
+branches. L4T R38.x **does not support Orin** (NVIDIA: "Version 38.4 of
+Jetson Linux does not support the Jetson Orin product family"); the Orin
+machine configs that exist in the pinned meta-tegra tree are non-functional
+here and are not configured, referenced, or documented on this branch.
 
-The tracked tree contains Kas configuration in `kas/`, build helpers in `scripts/`, feature and layout notes, and a checked-out layer set including Poky and OpenEmbedded content.
+## Generation facts
 
-`kas/common.yaml` is the central build configuration anchor, while `kas-container` and the Makefile provide containerized and local entry points. The scripts cover all-target builds, Kas invocation, branch cleanup, and secure-update key generation.
+| Item | Value |
+|---|---|
+| OE-Core release | whinlatter (5.3), consumed as split repos (see below) |
+| meta-tegra branch | master-l4t-r38.4.x, commit `83f51cb2b3d179f00feb1fbdf0fdb4a65151ae81` |
+| L4T | R38.4.0 (Thor-only generation) |
+| JetPack | 7.x (7.1 line; verified against NVIDIA's R38.4 GA developer guide and JetPack 7.1 announcements) |
+| Boot flow | UEFI + extlinux |
+| Flash flow | unified initrd-flash from the `tegraflash-tar` package — the Thor dev kit rootfs is **NVMe** (no internal storage) |
+| Image output | flash package (`.tegraflash-tar`) + rootfs (ext4 / ext4.simg) |
 
-The repository is primarily an image assembly and integration boundary rather than an application source tree.
+### Why the OE-Core repos are split on this branch
 
-It supplies the Linux distribution, package layers, machine/image configuration, and deployment workflow consumed by the client, HAL, configuration daemon, and hardware target.
+The `poky` combo repository retired its `master` branch upstream and carries
+no whinlatter line. This branch therefore consumes OE-Core, bitbake, and
+meta-yocto as **separate pinned repositories** (whinlatter release, bitbake
+2.18 — satisfying whinlatter's minimum of 2.15.2). Every other layer pins
+unchanged in mechanism.
 
-The checked-in `build/` logs and lock files provide evidence of prior BitBake activity, but they do not by themselves prove that a current clean image can be reproduced.
+## Family coverage (all Thor SoMs and dev kits)
 
-The top-level scan found no Arches-specific unit-test suite. Files under vendored layers include upstream BitBake and recipe tests, which are not treated as product coverage here.
+| SoM | Module P/N | Dev kit / carrier | MACHINE | Flash path |
+|---|---|---|---|---|
+| AGX Thor T5000 128GB (dev kit module) | P3834-0008 | AGX Thor dev kit (P4071-0000 carrier; NVIDIA kit P4070), NVMe | `jetson-agx-thor-devkit` | initrd-flash (NVMe) |
+| AGX Thor T4000 64GB | P3834-0000 | P4071-0000 carrier, NVMe | `jetson-agx-thor-t4000` | initrd-flash (NVMe) |
 
-Build success, boot, device discovery, OTA update, secure-boot behavior, and service integration therefore require a configured host and target-level validation. Statuses below distinguish present build plumbing from behavior that remains unknown until an image is built and exercised.
+Notes:
+- Module P/Ns verified against the NVIDIA Jetson Linux R38.4 developer guide
+  device table (T5000 128GB = P3834-0008 dev-kit module; T4000 64GB =
+  commercial module) and against the pinned meta-tegra machine configs
+  (`jetson-agx-thor-devkit.conf`: "P3834-0008 module in P4071-0000 carrier
+  with NVMe"; `jetson-agx-thor-t4000.conf`: "P3834-0000 module in P4071-0000
+  carrier with NVMe").
+- Both machines boot from NVMe (`TEGRaFLASH_NO_INTERNAL_STORAGE = "1"` in the
+  pinned BSP); the unified initrd-flash flow is the only flash path.
+- The upstream `clara-agx-xavier-devkit` and all Orin machines exist in the
+  pinned BSP tree but are outside this branch's product scope; not configured.
 
-The OS repository depends on external Yocto layers, host tool versions, machine configuration, credentials, and target hardware.
+## Upstream pins (authoritative manifest: `PINS.md`, machine-readable: `kas/repos/*.yaml`)
 
-Review clean-image reproducibility, boot logs, service enablement, device discovery, secure update handling, and rollback behavior before release.
+| Layer | Branch | Commit |
+|---|---|---|
+| openembedded-core | whinlatter | `8751ec83421192fc0f8495fb95798f9eb7be77a0` |
+| bitbake | 2.18 | `0ad6c1c34a5e07a5f8dd66ab248c1e7b37b69fa9` |
+| meta-yocto | whinlatter | `3f2e6b6fadfa542f0fe3738375a2f9fcbd4c1f6e` |
+| meta-openembedded | whinlatter | `f52f32952cb9717949f8bc3d3ccf6c4c5a59521f` |
+| meta-tegra | master-l4t-r38.4.x | `83f51cb2b3d179f00feb1fbdf0fdb4a65151ae81` |
+| meta-swupdate | master | `5e069ecc5c5d3567186880748a3a5480f7235dde` |
+| meta-rust-bin | master | `54721fa1c7a4edaba7fb63cdbcaf0c6253c5fa3a` |
+| meta-arches | thor | `095425fa836b804f0c2328022d4cdfafdaad8c92` |
 
-No manual verification is implied by checked-in logs or scripts.
+## Build
 
-## Features
+The build is fully containerized; the host provides Docker and nothing else.
 
-| # | Name / Description | Implemented? | Test Coverage? | Manual Test |
-|---:|---|---|---|---|
-| 1 | Kas common build configuration | Implemented | Unknown: build configuration only | [ ] Manual verification required |
-| 2 | Yocto/Poky and OpenEmbedded layer integration | Implemented | Upstream tests only | [ ] Manual verification required |
-| 3 | Arches machine/image definition | Partial | No product test found | [ ] Manual verification required |
-| 4 | Containerized Kas workflow | Implemented | Unknown | [ ] Manual verification required |
-| 5 | All-target build script | Implemented | Unknown | [ ] Manual verification required |
-| 6 | Feature and layout configuration notes | Implemented | Unknown | [ ] Manual verification required |
-| 7 | Secure-update key generation | Implemented | Unknown | [ ] Manual verification required |
-| 8 | Deployment and bootable image output | Partial | No clean-image result claimed | [ ] Manual verification required |
-| 9 | Client/HAL/Configuration service integration | Planned | No OS integration test found | [ ] Manual verification required |
-| 10 | Target boot, hardware discovery, and OTA validation | Unknown | No product test found | [ ] Manual verification required |
+```sh
+# flagship dev kit (jetson-agx-thor-devkit), zero arguments:
+docker build -t arches-kas:latest docker/yocto
+make build
 
-## Validation Commands
+# the T4000 machine:
+make build jetson-agx-thor-t4000
+```
 
-Use the repository Makefile, `scripts/build-all.sh`, or `kas-container` with the required Yocto host dependencies. Clean-image and target validation remain outstanding.
+`make build <board>` resolves to `scripts/kas-container` (kas 4.5) running
+`kas build kas/boards/<board>.yaml` in the digest-pinned container, with the
+source tree, `cache/downloads`, and `cache/sstate-cache` bind-mounted and
+persistent. No edits to tracked files are needed.
+
+## Flash
+
+Thor uses the **unified initrd-flash flow** (see `FLASH.md`): the build
+produces a `.tegraflash-tar` package in `build/tmp/deploy/images/<MACHINE>/`;
+the dev kit and T4000 targets flash to NVMe via `initrd-flash`.
+
+**Hardware validation status: no board flashing/boot has been executed in
+the environment where this branch was prepared.** The machines are
+configured and expected to build; flash and boot behavior is recorded as
+untested in `VERIFY.md` until a target validates it.
+
+## Validation gate
+
+`./.claude/validate.sh quick` (seconds) or `full` (adds build + tests) must
+pass before any change is claimed complete. Exit code 77 is not a pass.

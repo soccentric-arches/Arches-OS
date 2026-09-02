@@ -1,0 +1,29 @@
+header:
+  version: 14
+
+# Whinlatter-era OE-Core: the poky combo repository stopped carrying
+# master/whinlatter (its master branch is retired); OE-Core, bitbake and
+# meta-yocto are consumed as separate repos at the whinlatter release.
+repos:
+  openembedded-core:
+    url: https://git.openembedded.org/openembedded-core
+    branch: whinlatter
+    commit: 8751ec83421192fc0f8495fb95798f9eb7be77a0
+    path: layers/openembedded-core
+    layers:
+      meta:
+
+  bitbake:
+    url: https://git.openembedded.org/bitbake
+    branch: "2.18"
+    commit: 0ad6c1c34a5e07a5f8dd66ab248c1e7b37b69fa9
+    path: layers/bitbake
+
+  meta-yocto:
+    url: https://git.yoctoproject.org/meta-yocto
+    branch: whinlatter
+    commit: 3f2e6b6fadfa542f0fe3738375a2f9fcbd4c1f6e
+    path: layers/meta-yocto
+    layers:
+      meta-poky:
+      meta-yocto-bsp:

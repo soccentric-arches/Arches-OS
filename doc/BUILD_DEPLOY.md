@@ -29,11 +29,11 @@ The Makefile exposes `test`, `lint`, and `validate` as validation targets where 
 
 ## 6. Packaging and artifacts
 
-Image artifacts are collected by `make deploy-images` from `build/tmp/deploy/images/$(MACHINE)` into `deploy/images/<board>_<timestamp>/`, including `.wic.bz2` and `.wic.bmap`. SDK installers are collected by `make deploy-sdk`; eSDK installers by `make deploy-esdk`. `make swu BOARD=<board>` creates an OTA `.swu`; it is signed only when the configured private key is present.
+Image artifacts are collected by `make deploy-images` from `build/tmp/deploy/images/$(MACHINE)` into `deploy/images/<board>_<timestamp>/`, including the tegraflash-tar flash package and the rootfs image (ext4/ext4.simg). SDK installers are collected by `make deploy-sdk`; eSDK installers by `make deploy-esdk`. `make swu BOARD=<board>` creates an OTA `.swu`; it is signed only when the configured private key is present.
 
 ## 7. Deployment, install, and run
 
-- `make flash BOARD=<board> DEVICE=/dev/sdX` validates the block device and flashes the newest compressed WIC with its bmap. This is destructive and requires explicit hardware confirmation.
+- `make flash BOARD=<board>` prints the flash procedure and points at `FLASH.md`; Thor boards flash via the unified `initrd-flash` flow from the tegraflash-tar package (NVMe rootfs), not via bmaptool. This is destructive and requires explicit hardware confirmation.
 - `make swu BOARD=<board>` packages the root filesystem, boot image, DTB, install hooks, and SWUpdate description, then deploys it with `deploy-swu`.
 - `make deploy-images`, `make deploy-sdk`, `make deploy-esdk`, and `make deploy-swu` stage local release artifacts; they do not publish to a cloud registry.
 - `make deploy`/`make deploy-*` behavior is conditional on the current Makefile variables and artifact availability; inspect `make help` before invoking a release workflow.

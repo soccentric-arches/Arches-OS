@@ -4,8 +4,8 @@ header:
 repos:
   meta-tegra:
     url: https://github.com/OE4T/meta-tegra
-    branch: scarthgap
-    commit: d2613418
+    branch: master-l4t-r38.4.x
+    commit: 83f51cb2b3d179f00feb1fbdf0fdb4a65151ae81
     path: layers/meta-tegra
     layers:
       .:

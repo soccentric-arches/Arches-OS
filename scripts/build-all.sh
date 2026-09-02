@@ -9,8 +9,8 @@
 #
 # Usage:
 #   scripts/build-all.sh                                 # all boards, build+sdk+esdk
-#   scripts/build-all.sh -b jetson-orin-nano              # single board
-#   scripts/build-all.sh -b jetson-orin-nano,jetson-agx-orin-devkit
+#   scripts/build-all.sh -b jetson-agx-thor-devkit         # single board
+#   scripts/build-all.sh -b jetson-agx-thor-devkit
 #   scripts/build-all.sh -t build                         # image build only
 #   scripts/build-all.sh -t build,sdk-image,esdk-image    # full docker chains
 #
