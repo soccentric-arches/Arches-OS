@@ -1,0 +1,62 @@
+# Orin Branch Task List
+
+- Confirm the selected Yocto/OE-Core release.
+- Confirm the selected `meta-tegra` Orin revision.
+- Record the full immutable revision in the branch manifest.
+- Confirm the selected L4T R36.x release.
+- Confirm the matching JetPack 6.x release.
+- Confirm the matching host-toolchain requirements from the selected BSP.
+- Verify the AGX Orin 32GB machine mapping.
+- Verify the AGX Orin 64GB machine mapping.
+- Verify the AGX Orin Industrial machine mapping.
+- Verify the Orin NX 16GB machine mapping.
+- Verify the Orin NX 8GB machine mapping.
+- Verify the Orin Nano 8GB machine mapping.
+- Verify the Orin Nano Super machine mapping.
+- Verify the Orin Nano 4GB machine mapping.
+- Verify each P3737 carrier mapping.
+- Verify each P3768 carrier mapping.
+- Verify the P3509 carrier mapping.
+- Remove machines outside the Orin generation from branch configuration.
+- Add only verified Orin machine aliases under `meta-arches`.
+- Set the default flagship Orin developer-kit board.
+- Add one kas board entry for each verified Orin machine.
+- Add the Orin layer revision manifest.
+- Pin every Orin upstream repository to a full commit.
+- Pin the matching `meta-arches` Orin commit.
+- Add Orin-specific `local.conf.sample`.
+- Add Orin-specific `bblayers.conf.sample`.
+- Add the Orin Dockerfile.
+- Pin the Orin Docker base image.
+- Add the Orin container entry script.
+- Mount the Orin downloads cache in the container.
+- Mount the Orin sstate cache in the container.
+- Enable only verified Orin CUDA packages.
+- Enable only verified Orin TensorRT packages.
+- Enable only verified Orin camera and GStreamer packages.
+- Verify DLA and PVA package availability.
+- Verify `nvpmodel` delivery.
+- Verify `nvfancontrol` delivery.
+- Verify `tegrastats` delivery.
+- Review every Orin kernel configuration fragment.
+- Review every Orin device-tree asset.
+- Review every Orin UEFI and extlinux override.
+- Review every Orin A/B partition layout.
+- Verify the initrd flash workflow.
+- Document the AGX Orin flash command.
+- Document the AGX Orin Industrial flash command.
+- Document each Orin NX flash command.
+- Document each Orin Nano flash command.
+- Add `VERIFY.md` for unresolved BSP or hardware behavior.
+- Add `MIGRATION.md` describing the split from the shared tree.
+- Parse all Orin kas YAML files.
+- Run Orin metadata lint checks.
+- Run Orin unit tests.
+- Run a focused Orin BitBake parse.
+- Build the default Orin image.
+- Build every verified Orin board image.
+- Verify generated Orin image artifacts.
+- Verify the SWUpdate artifact contents.
+- Check that no TX, Xavier, or Thor machine references remain.
+- Check that no host OS requirement is documented outside Docker metadata.
+- Check that the Orin upstream layers are clean.
