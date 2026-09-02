@@ -7,17 +7,17 @@
 - [x] Confirm the matching JetPack 4.6.x release.
 - [ ] Confirm the supported host-toolchain requirements from the selected BSP.
 - [x] List every TX1 machine exposed by the selected BSP: `jetson-tx1-devkit`.
-- Verify the TX1 module part number.
-- Verify the TX1 carrier and developer-kit mapping.
+- [x] Verify the TX1 module part number: P2180.
+- [x] Verify the TX1 carrier and developer-kit mapping: P2597.
 - [x] List every TX2 machine exposed by the selected BSP: `jetson-tx2-devkit`, `jetson-tx2-devkit-4gb`, and `jetson-tx2-devkit-tx2i`.
-- Verify the TX2 module part number.
-- Verify the TX2 carrier and developer-kit mapping.
-- Verify the TX2 4GB machine mapping.
-- Verify the TX2i machine mapping.
-- Verify the TX2 NX machine mapping.
+- [x] Verify the TX2 module part number: P3310.
+- [x] Verify the TX2 carrier and developer-kit mapping: P2771.
+- [x] Verify the TX2 4GB machine mapping: P3489-0888 on P2771.
+- [x] Verify the TX2i machine mapping: P3489 Storm variant on P2771.
+- [x] Verify the TX2 NX machine mapping: P3636 in the P3509 carrier.
 - [x] List every Nano SD machine exposed by the selected BSP: `jetson-nano-devkit` and `jetson-nano-2gb-devkit`.
-- Verify the Nano eMMC machine mapping.
-- Verify the Nano 2GB machine mapping.
+- [x] Verify the Nano eMMC machine mapping: P3448 SKU 0002 on P3449.
+- [x] Verify the Nano 2GB machine mapping: P3448 SKU 0003 on P3542.
 - Remove machines outside the TX generation from branch configuration.
 - Add only verified TX machine aliases under `meta-arches`.
 - Add a default flagship TX developer-kit board configuration.
@@ -55,6 +55,6 @@
 - Build every verified TX board image.
 - Verify generated TX image artifacts.
 - Verify the TX flash package contents.
-- Check that no Xavier, Orin, or Thor machine references remain.
+- Check that no unrelated Xavier, Orin, or Thor machine references remain; retain the canonical `jetson-xavier-nx-devkit-tx2-nx` TX2 NX name.
 - Check that no host OS requirement is documented outside Docker metadata.
 - Check that the TX upstream layers are clean.

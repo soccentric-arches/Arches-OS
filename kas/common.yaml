@@ -6,7 +6,6 @@ header:
     - kas/repos/meta-tegra.yaml
     - kas/repos/meta-swupdate.yaml
     - kas/repos/meta-rust-bin.yaml
-    - kas/repos/meta-virtualization.yaml
     - kas/repos/meta-arches.yaml
 
 distro: poky
@@ -17,11 +16,8 @@ local_conf_header:
     # Init manager
     INIT_MANAGER = "systemd"
 
-    # SD card image output (wic for SD card, ext4 for SWUpdate OTA)
-    IMAGE_FSTYPES = "wic.bz2 wic.bmap ext4"
-
-    # All supported boards use the UEFI/extlinux boot partition source.
-    IMAGE_BOOT_FILES = "Image initrd extlinux/extlinux.conf"
+    # TX boards use the legacy tegraflash image flow.
+    IMAGE_FSTYPES = "ext4 tegraflash"
 
     # Shared caches (bind-mounted by Docker)
     DL_DIR     ?= "${TOPDIR}/../cache/downloads"
@@ -69,6 +65,5 @@ local_conf_header:
     PREFERRED_VERSION:rust-bin-cross-aarch64 = "1.85.1"
     PREFERRED_VERSION:cargo-bin-cross-aarch64 = "1.85.1"
 
-    # Jetson Orin Nano: boot via UEFI + extlinux (no U-Boot needed)
     # Accept NVIDIA proprietary licence for BSP components
     LICENSE_FLAGS_ACCEPTED:append = " commercial"

@@ -5,7 +5,8 @@ repos:
   poky:
     url: https://git.yoctoproject.org/poky
     branch: scarthgap
-    commit: d4576e3c08
+    branch: kirkstone
+    commit: 445a6223929b9a7a62b575093659e3d9e1aba982
     path: layers/poky
     layers:
       meta:

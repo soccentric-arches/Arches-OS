@@ -4,6 +4,6 @@ header:
 repos:
   meta-swupdate:
     url: https://github.com/sbabic/meta-swupdate
-    branch: scarthgap
-    commit: a329ea9
+    branch: kirkstone
+    commit: f115c13978a2263fc5d89a2e3cc8bc79ce66f9a2
     path: layers/meta-swupdate

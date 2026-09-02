@@ -1,0 +1,6 @@
+header:
+  version: 14
+  includes:
+    - kas/common.yaml
+
+machine: jetson-nano-devkit
