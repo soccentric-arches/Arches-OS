@@ -64,7 +64,7 @@ endif
 #   jetson-nano-devkit          Jetson Nano dev kit (SD image via dosdcard.sh)
 #   jetson-nano-devkit-emmc     Jetson Nano eMMC module (P3448-0002)
 #   jetson-nano-2gb-devkit      Jetson Nano 2GB dev kit (SD image via dosdcard.sh)
-BOARD            ?= jetson-tx1-devkit
+BOARD            ?= jetson-nano-2gb-devkit
 KAS_CONFIG       := kas/boards/$(BOARD).yaml
 
 # Derive MACHINE automatically from the kas yaml
