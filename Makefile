@@ -364,6 +364,8 @@ deploy-images: ## Copy .wic artifacts → deploy/images/BOARD_TS/
 	 out="$(DEPLOY_DIR)/images/$(BOARD)_$(DEPLOY_TS)"; \
 	 test -d "$$src" || { echo "ERROR: No image artifacts at $$src"; exit 1; }; \
 	 echo "Deploying SD card images → $$out ..."; \
+	 find "$(DEPLOY_DIR)/images" -mindepth 1 -maxdepth 1 -type d \
+	     -name "$(BOARD)_*" -exec rm -rf {} + 2>/dev/null || true; \
 	 mkdir -p "$$out"; \
 	 find "$$src" -maxdepth 1 \( -type f -o -type l \) \
 	     \( -name "*.wic.bz2" -o -name "*.wic.bmap" \) \
@@ -376,6 +378,8 @@ deploy-sdk: ## Copy SDK installer   → deploy/sdk/BOARD_TS/
 	 out="$(DEPLOY_DIR)/sdk/$(BOARD)_$(DEPLOY_TS)"; \
 	 test -d "$$src" || { echo "ERROR: No SDK artifacts at $$src"; exit 1; }; \
 	 echo "Deploying SDK → $$out ..."; \
+	 find "$(DEPLOY_DIR)/sdk" -mindepth 1 -maxdepth 1 -type d \
+	     -name "$(BOARD)_*" -exec rm -rf {} + 2>/dev/null || true; \
 	 mkdir -p "$$out"; \
 	 find "$$src" -maxdepth 1 \( -type f -o -type l \) \
 	     -name '*.sh' ! -name '*-ext-*' \
@@ -400,6 +404,8 @@ deploy-swu: ## Copy .swu package    → deploy/swu/BOARD_TS/
 	 swu="$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
 	 test -f "$$swu" || { echo "ERROR: $$swu not found"; exit 1; }; \
 	 echo "Deploying SWU → $$out ..."; \
+	 find "$(DEPLOY_DIR)/swu" -mindepth 1 -maxdepth 1 -type d \
+	     -name "$(BOARD)_*" -exec rm -rf {} + 2>/dev/null || true; \
 	 mkdir -p "$$out"; \
 	 cp -L "$$swu" "$$out/"; \
 	 echo "  Done: $$out"
