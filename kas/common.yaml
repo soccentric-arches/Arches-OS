@@ -45,6 +45,11 @@ local_conf_header:
     # istate hub and nine spokes. A board profile can set this to "0" to drop
     # the suite, the way the other ARCHES_* capability flags work.
     ARCHES_INSTRUMENTATION = "1"
+
+    # The IV&V product: Arches-HAL plus Arches-Client. Set to "0" for a plain
+    # platform image with no validation stack. Arches-Server is not included --
+    # it runs on an x86 host, not on the device.
+    ARCHES_IVV = "1"
     ARCHES_DEBUG = "1"
     ARCHES_SDK_SUPPORT = "1"
     ARCHES_SECURE_BOOT ?= "0"
