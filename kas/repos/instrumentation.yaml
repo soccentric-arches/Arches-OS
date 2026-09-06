@@ -1,0 +1,21 @@
+header:
+  version: 14
+
+# Arches-Instrumentation ships its Yocto layer inside the product repo rather
+# than as a separate meta-* repo, so the repo is cloned and only its yocto/
+# subdirectory is registered as a layer (`layers: yocto:`). That directory
+# became a real layer when it gained conf/layer.conf (Task.md D-01); before
+# that, adding it here would have failed bitbake parsing.
+#
+# Pinned like every other layer here. The recipe pins its own SRCREV
+# separately (Task.md D-13) -- this commit selects the layer metadata, that
+# one selects the source built from it, and they are deliberately independent
+# so a recipe fix does not require a source bump.
+repos:
+  arches-instrumentation:
+    url: git@github.com:soccentric-arches/Arches-Instrumentation.git
+    branch: develop
+    commit: a28a84fe74da5c075694c622555a1810ff8d597f
+    path: layers/arches-instrumentation
+    layers:
+      yocto:

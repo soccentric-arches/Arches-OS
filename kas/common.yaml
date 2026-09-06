@@ -7,6 +7,7 @@ header:
     - kas/repos/meta-swupdate.yaml
     - kas/repos/meta-rust-bin.yaml
     - kas/repos/meta-virtualization.yaml
+    - kas/repos/instrumentation.yaml
     - kas/repos/meta-arches.yaml
 
 distro: poky
@@ -39,6 +40,11 @@ local_conf_header:
     # Shared product capabilities for every board image and SDK.
     ARCHES_MIDDLEWARE = "1"
     ARCHES_CLOUD = "1"
+
+    # On-device management and observability (Arches-Instrumentation): the
+    # istate hub and nine spokes. A board profile can set this to "0" to drop
+    # the suite, the way the other ARCHES_* capability flags work.
+    ARCHES_INSTRUMENTATION = "1"
     ARCHES_DEBUG = "1"
     ARCHES_SDK_SUPPORT = "1"
     ARCHES_SECURE_BOOT ?= "0"
