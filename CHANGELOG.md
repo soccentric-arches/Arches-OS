@@ -10,6 +10,17 @@ Entries written by hand are fine; the engine inserts directly under this header.
 
 ### Summary
 
+Documented the supported, safety-checked procedure for creating Jetson Nano SD-card boot media from a built image bundle.
+
+### Files changed
+
+- `meta/meta-arches/recipes-core/images/FLASH_SDCARD.md`: Added build, bundle-extraction, device-verification, and `dosdcard.sh` flashing instructions for Nano SD-card boards; documented recovery-mode exclusions and prohibited incorrect WIC write methods.
+- `CHANGELOG.md`: Recorded this documentation change with its dated summary and per-file details.
+
+## 2026-09-08
+
+### Summary
+
 Established a mandatory release-readiness change-log rule for all repository changes.
 
 ### Files changed
