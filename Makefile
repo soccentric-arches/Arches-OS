@@ -85,6 +85,11 @@ DEPLOY_TS        := $(shell date +%Y%m%d_%H%M%S)
 SDK_INSTALL_DIR  ?= /opt/poky/sdk
 ESDK_INSTALL_DIR ?= /opt/poky/esdk
 
+# SD-card flashing instructions, copied into deploy/images/BOARD_TS/ by
+# deploy-images for the Nano SD-card boards it documents (see the file itself
+# for scope — TX1/TX2/TX2 NX/Nano eMMC use doflash.sh, not this procedure).
+FLASH_SDCARD_DOC ?= meta/meta-arches/recipes-core/images/FLASH_SDCARD.md
+
 # --- kas-container -----------------------------------------------------------
 KAS_CONTAINER     := $(CURDIR)/scripts/kas-container
 KAS_CONTAINER_URL  = https://raw.githubusercontent.com/siemens/kas/refs/tags/$(KAS_VERSION)/kas-container
@@ -346,13 +351,21 @@ swu: check-board ## Build and deploy an OTA package
 
 
 ## Flash — TX generation uses the legacy tegraflash flow, not WIC writes.
-## See TX_FLASH.md for the per-machine procedure (doflash.sh / dosdcard.sh).
-flash: check-board ## Print the TX flash procedure (see TX_FLASH.md)
+## Nano SD-card boards: see FLASH_SDCARD_DOC (deployed alongside the bundle
+## by deploy-images). Other boards use doflash.sh in USB recovery mode.
+flash: check-board ## Print the TX flash procedure
 	@echo "TX boards do not flash via WIC/bmaptool."
-	@echo "Build the board image, then follow TX_FLASH.md:"
+	@echo "Build the board image, then extract its tegraflash bundle:"
 	@echo "  make build $(BOARD)"
 	@echo "  tar -xzf build/tmp/deploy/images/$(MACHINE)/*.tegraflash.tar.gz -C /tmp/tegraflash-$(MACHINE)"
-	@echo "  cd /tmp/tegraflash-$(MACHINE) && ./doflash.sh   # or ./dosdcard.sh for Nano SD/2GB"
+	@case "$(MACHINE)" in \
+	  jetson-nano-devkit|jetson-nano-2gb-devkit) \
+	    echo "  cd /tmp/tegraflash-$(MACHINE) && sudo ./dosdcard.sh"; \
+	    echo "See $(FLASH_SDCARD_DOC) for the full SD-card procedure" \
+	         "(also copied into deploy/images/$(BOARD)_*/ )." ;; \
+	  *) \
+	    echo "  cd /tmp/tegraflash-$(MACHINE) && ./doflash.sh   # USB recovery mode" ;; \
+	esac
 
 # -----------------------------------------------------------------------------
 # Artifact deployment (called automatically; can also be invoked manually)
@@ -361,7 +374,9 @@ flash: check-board ## Print the TX flash procedure (see TX_FLASH.md)
 ## Copy tegraflash flash packages → deploy/images/BOARD_TS/
 ## All boards build via the legacy tegraflash flow (image_types_tegra.bbclass),
 ## not WIC — the flashable artifact is the *.tegraflash.tar.gz bundle
-## containing doflash.sh / dosdcard.sh (see TX_FLASH.md).
+## containing doflash.sh / dosdcard.sh. For the Nano SD-card boards, the
+## bundle's dosdcard.sh procedure is documented in FLASH_SDCARD_DOC, a copy of
+## which is deployed alongside the bundle below.
 deploy-images: ## Copy tegraflash artifacts → deploy/images/BOARD_TS/
 	@src="$(BUILD_DIR)/tmp/deploy/images/$(MACHINE)"; \
 	 out="$(DEPLOY_DIR)/images/$(BOARD)_$(DEPLOY_TS)"; \
@@ -375,6 +390,14 @@ deploy-images: ## Copy tegraflash artifacts → deploy/images/BOARD_TS/
 	     -exec cp -L {} "$$out/" \;; \
 	 test -n "$$(find "$$out" -mindepth 1 -maxdepth 1)" || \
 	     { echo "ERROR: No *.tegraflash.tar.gz found in $$src"; exit 1; }; \
+	 case "$(MACHINE)" in \
+	   jetson-nano-devkit|jetson-nano-2gb-devkit) \
+	     if [ -f "$(FLASH_SDCARD_DOC)" ]; then \
+	       cp "$(FLASH_SDCARD_DOC)" "$$out/"; \
+	     else \
+	       echo "WARNING: $(FLASH_SDCARD_DOC) not found — skipping SD-card flash doc"; \
+	     fi ;; \
+	 esac; \
 	 echo "  Done: $$out"
 
 ## Copy cross-toolchain SDK installer → deploy/sdk/BOARD_TS/

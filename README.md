@@ -18,7 +18,7 @@ tree.
 | L4T | R32.7.6 (terminal release for TX1/TX2/Nano — no further upstream releases) |
 | JetPack | 4.6.6 |
 | Boot flow | cboot (TX1/TX2) or U-Boot (Nano family), legacy boot |
-| Flash flow | legacy tegraflash package (`doflash.sh` / `dosdcard.sh`) — see TX_FLASH.md |
+| Flash flow | legacy tegraflash package (`doflash.sh` / `dosdcard.sh`) — see "Flash" below |
 | Image output | ext4 + tegraflash package (no WIC) |
 
 ## Family coverage (all TX-generation SoMs and dev kits)
@@ -82,9 +82,12 @@ bitbake parses cleanly; a full TX1 build completed (5,777 tasks) producing
 ## Flash
 
 TX-generation flashing is **not** WIC/bmaptool-based. Build the image, then
-follow `TX_FLASH.md`: extract the per-machine `.tegraflash.tar.gz` from
-`build/tmp/deploy/images/<MACHINE>/` and run `doflash.sh` (USB recovery mode)
-or `dosdcard.sh` (Nano SD / Nano 2GB SD image creation).
+extract the per-machine `.tegraflash.tar.gz` from
+`build/tmp/deploy/images/<MACHINE>/` (or `deploy/images/<board>_<timestamp>/`)
+and run `doflash.sh` (USB recovery mode) or `dosdcard.sh` (Nano SD / Nano 2GB
+SD image creation). For the Nano SD-card boards, see
+`meta/meta-arches/recipes-core/images/FLASH_SDCARD.md`, which `make
+deploy-images` also copies alongside the bundle.
 
 **Hardware validation status:** the TX1 image build and tegraflash package
 generation are verified; physical recovery-mode flashing and boot for every

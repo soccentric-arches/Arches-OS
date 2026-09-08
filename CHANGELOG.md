@@ -10,6 +10,19 @@ Entries written by hand are fine; the engine inserts directly under this header.
 
 ### Summary
 
+Wired the Jetson Nano SD-card flashing instructions to deploy alongside the flash bundle in `deploy/images/BOARD_TS/`, so the doc ships with the artifact it documents. Fixed dangling references to the previously-deleted `TX_FLASH.md`.
+
+### Files changed
+
+- `Makefile`: Added `FLASH_SDCARD_DOC` variable; `deploy-images` now copies `FLASH_SDCARD.md` into `deploy/images/BOARD_TS/` for the Nano SD-card boards (`jetson-nano-devkit`, `jetson-nano-2gb-devkit`) alongside the tegraflash bundle; `flash` target now prints the correct per-board procedure (`dosdcard.sh` with a pointer to the doc for Nano boards, `doflash.sh` USB recovery mode for others) instead of referencing the deleted `TX_FLASH.md`.
+- `meta/meta-arches/recipes-core/images/FLASH_SDCARD.md`: Noted that this file is automatically copied into `deploy/images/<board>_<timestamp>/` by `make build`/`make deploy-images`.
+- `README.md`: Replaced two dangling references to the deleted `TX_FLASH.md` with the current bundle-extraction/flash procedure and a pointer to `FLASH_SDCARD.md`.
+- `CHANGELOG.md`: Recorded this change with its dated summary and per-file details.
+
+## 2026-09-08
+
+### Summary
+
 Documented the supported, safety-checked procedure for creating Jetson Nano SD-card boot media from a built image bundle.
 
 ### Files changed
