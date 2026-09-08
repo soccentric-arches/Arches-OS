@@ -3,6 +3,12 @@
 Yocto + kas image build for the Jetson. Produces the OS that Client, Configuration and the
 HAL/gRPC middleware all run inside.
 
+## Rule 1: Change log
+
+Before completing any change, add a newest-first entry to `CHANGELOG.md` with its
+date, a concise summary, and a per-file description of every file changed. This
+applies to source, configuration, documentation, and build changes.
+
 ## How you work here
 
 * Commands: `.claude/commands/` — build, test, lint, boards, check-board, clean-build, kas-checkout, status, swu, help, validate.

@@ -358,18 +358,23 @@ flash: check-board ## Print the TX flash procedure (see TX_FLASH.md)
 # Artifact deployment (called automatically; can also be invoked manually)
 # -----------------------------------------------------------------------------
 
-## Copy .wic SD card images → deploy/images/BOARD_TS/
-deploy-images: ## Copy .wic artifacts → deploy/images/BOARD_TS/
+## Copy tegraflash flash packages → deploy/images/BOARD_TS/
+## All boards build via the legacy tegraflash flow (image_types_tegra.bbclass),
+## not WIC — the flashable artifact is the *.tegraflash.tar.gz bundle
+## containing doflash.sh / dosdcard.sh (see TX_FLASH.md).
+deploy-images: ## Copy tegraflash artifacts → deploy/images/BOARD_TS/
 	@src="$(BUILD_DIR)/tmp/deploy/images/$(MACHINE)"; \
 	 out="$(DEPLOY_DIR)/images/$(BOARD)_$(DEPLOY_TS)"; \
 	 test -d "$$src" || { echo "ERROR: No image artifacts at $$src"; exit 1; }; \
-	 echo "Deploying SD card images → $$out ..."; \
+	 echo "Deploying tegraflash package → $$out ..."; \
 	 find "$(DEPLOY_DIR)/images" -mindepth 1 -maxdepth 1 -type d \
 	     -name "$(BOARD)_*" -exec rm -rf {} + 2>/dev/null || true; \
 	 mkdir -p "$$out"; \
 	 find "$$src" -maxdepth 1 \( -type f -o -type l \) \
-	     \( -name "*.wic.bz2" -o -name "*.wic.bmap" \) \
+	     -name "*.tegraflash.tar.gz" \
 	     -exec cp -L {} "$$out/" \;; \
+	 test -n "$$(find "$$out" -mindepth 1 -maxdepth 1)" || \
+	     { echo "ERROR: No *.tegraflash.tar.gz found in $$src"; exit 1; }; \
 	 echo "  Done: $$out"
 
 ## Copy cross-toolchain SDK installer → deploy/sdk/BOARD_TS/
