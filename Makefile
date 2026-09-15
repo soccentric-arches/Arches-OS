@@ -121,7 +121,7 @@ _ESDK_IMAGE_TAG  := $(lastword  $(subst :, ,$(ESDK_IMAGE)))
         kas-image image ensure-image \
         sdk-image ensure-sdk-image \
         esdk-image ensure-esdk-image \
-        kas-container-script shell flash sdk esdk swu \
+        kas-container-script shell test-wiring flash sdk esdk swu \
         deploy-images deploy-sdk deploy-esdk deploy-swu \
         clean clean-build clean-docker clean-all \
 		check-board completion help lint test validate
@@ -286,6 +286,9 @@ build-all: ensure-image kas-container-script ## Build image+sdk+esdk for every b
 ## Interactive shell inside the KAS build container
 shell: ensure-image kas-container-script check-board ## Open an interactive kas build shell
 	$(KAS_RUN) shell $(KAS_CONFIG)
+
+test-wiring: ensure-image kas-container-script ## Bitbake-build just WebConfig + Instrumentation (skips the full image)
+	$(KAS_RUN) shell $(KAS_CONFIG) -c "bitbake webconfigd webconfig-static webconfig-schemas webconfig-manifest instrumentation"
 
 ## Build the cross-toolchain SDK installer and deploy it (no Docker image)
 ## Use 'make sdk-image' to also build the SDK Docker image.
