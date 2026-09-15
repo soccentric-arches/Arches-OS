@@ -1,0 +1,23 @@
+header:
+  version: 14
+
+repos:
+  # Arches-Configuration's meta-webconfig layer (the on-device WebConfig
+  # daemon + static frontend + schemas + board manifest). Did not exist
+  # until this commit — see the layer's own conf/layer.conf for why (this
+  # repo's own docs, and Task.md D-09, both described it as already wired
+  # in; it never was). Only the meta-webconfig subdirectory is a layer;
+  # the rest of the repo (Rust workspace, frontend source) is not needed
+  # by the build.
+  #
+  # NOTE (Task.md B-01): Arches-Instrumentation and Arches-Configuration
+  # implement overlapping on-device responsibilities (network, firewall,
+  # OTA, logs, monitoring, backup). Which one owns device system state is
+  # an open human decision this wiring does not resolve — both are wired
+  # in per that decision still being open, not because it was settled.
+  arches-configuration:
+    url: git@github.com:soccentric-arches/Arches-Configuration.git
+    branch: develop
+    path: meta/arches-configuration
+    layers:
+      meta-webconfig:

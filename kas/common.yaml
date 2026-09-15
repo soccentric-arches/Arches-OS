@@ -7,6 +7,8 @@ header:
     - kas/repos/meta-swupdate.yaml
     - kas/repos/meta-rust-bin.yaml
     - kas/repos/meta-arches.yaml
+    - kas/repos/arches-configuration.yaml
+    - kas/repos/arches-instrumentation.yaml
 
 distro: poky
 target: arches-image

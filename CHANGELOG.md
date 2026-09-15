@@ -6,6 +6,31 @@ own feature branch. See the master repo's `Arches-Loop-Orchestration-Spec-v2.md`
 
 Entries written by hand are fine; the engine inserts directly under this header.
 
+## 2026-09-15
+
+### Summary
+
+Wired both Arches-Configuration's WebConfig and Arches-Instrumentation's yocto
+layer into the kas layer set, correcting two stale claims: Task.md D-08 marked
+Instrumentation wiring "DONE" when it never was, and D-09/root CLAUDE.md described
+Configuration's meta-webconfig layer as already existing (it didn't — authored
+fresh in Arches-Configuration in this change). WebConfig now installs on every
+board; Instrumentation is wired but not yet in any IMAGE_INSTALL, since its
+COMPATIBLE_MACHINE list doesn't cover any of this repo's actual Jetson boards.
+Done ahead of the Task.md B-01 ownership decision (Configuration vs
+Instrumentation), per explicit human direction — does not resolve B-01.
+
+### Files changed
+
+- `kas/repos/arches-configuration.yaml`: New — fetches Arches-Configuration's
+  meta-webconfig subdirectory as a layer.
+- `kas/repos/arches-instrumentation.yaml`: New — fetches Arches-Instrumentation's
+  yocto subdirectory as a layer.
+- `kas/common.yaml`: Added both new repo includes.
+- `meta/meta-arches/recipes-core/images/arches-image-common.inc`: Added
+  `IMAGE_INSTALL:append` for `webconfigd webconfig-static webconfig-schemas
+  webconfig-manifest`. Instrumentation intentionally not added here — see summary.
+
 ## 2026-09-08
 
 ### Summary

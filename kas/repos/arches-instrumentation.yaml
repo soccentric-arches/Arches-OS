@@ -1,0 +1,29 @@
+header:
+  version: 14
+
+repos:
+  # Arches-Instrumentation ships its own Yocto layer (yocto/, collection
+  # name "instrumentation") — this is the original template every other
+  # project's Instrumentation leaf copied. Task.md D-08 claims this is
+  # already wired into kas/common.yaml and IMAGE_INSTALL ("DONE"); it
+  # is not — there is no trace of it in kas/common.yaml or any
+  # IMAGE_INSTALL, and this commit is the actual fix.
+  #
+  # Not added to any IMAGE_INSTALL: the recipe's COMPATIBLE_MACHINE list
+  # covers Jetson Orin/AGX-Orin-class devices, not Arches-OS's actual
+  # boards (jetson-nano-devkit, jetson-tx1-devkit, jetson-tx2-devkit and
+  # variants, jetson-xavier-nx-devkit-tx2-nx — see kas/boards/*.yaml), and
+  # there are no devices/capabilities/resource-profile descriptors for any
+  # of them. Adding "instrumentation" to IMAGE_INSTALL before that is
+  # fixed would fail every current board's build ("nothing provides
+  # instrumentation").
+  #
+  # NOTE (Task.md B-01): see arches-configuration.yaml's note — wiring
+  # this in does not resolve the open ownership question between this
+  # leaf and Arches-Configuration.
+  arches-instrumentation:
+    url: git@github.com:soccentric-arches/Arches-Instrumentation.git
+    branch: develop
+    path: meta/arches-instrumentation
+    layers:
+      yocto:
