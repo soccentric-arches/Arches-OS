@@ -5,7 +5,7 @@ repos:
   meta-arches:
     url: git@github.com:soccentric-arches/meta-arches.git
     branch: tx
-    commit: 5307dfa
+    commit: 8c16eda6686de86031fedd890f25e659844b65c4
     path: meta/meta-arches
     layers:
       .:
