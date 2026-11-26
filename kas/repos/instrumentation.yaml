@@ -13,7 +13,7 @@ header:
 # so a recipe fix does not require a source bump.
 repos:
   arches-instrumentation:
-    url: git@github.com:soccentric-arches/Arches-Instrumentation.git
+    url: https://github.com/soccentric-arches/Arches-Instrumentation.git
     branch: develop
     commit: a28a84fe74da5c075694c622555a1810ff8d597f
     path: layers/arches-instrumentation
