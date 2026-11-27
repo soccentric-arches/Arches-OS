@@ -15,7 +15,7 @@ repos:
   arches-instrumentation:
     url: https://github.com/soccentric-arches/Arches-Instrumentation.git
     branch: develop
-    commit: a28a84fe74da5c075694c622555a1810ff8d597f
+    commit: 8474d216e5b9e73017a09b7a7bff162f35f19175
     path: layers/arches-instrumentation
     layers:
       yocto:
